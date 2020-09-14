@@ -1,11 +1,14 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Reflection.Metadata;
 
 namespace OfficeCrawler {
     public class OfficeCrawler : Game {
+
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
+        private Player _player;
 
         public OfficeCrawler() {
             _graphics = new GraphicsDeviceManager(this);
@@ -15,7 +18,7 @@ namespace OfficeCrawler {
 
         protected override void Initialize() {
             // TODO: Add your initialization logic here
-
+            _player = new Player(null, Vector2.Zero);
             base.Initialize();
         }
 
@@ -23,6 +26,9 @@ namespace OfficeCrawler {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
+            Texture2D playerTex = Content.Load<Texture2D>("office_crawler_proto_final");
+            _player.setTexture(playerTex);
+            _player.addFont(Content.Load<SpriteFont>("insult"));
         }
 
         protected override void Update(GameTime gameTime) {
@@ -30,15 +36,16 @@ namespace OfficeCrawler {
                 Exit();
 
             // TODO: Add your update logic here
-
+            _player.update(gameTime);
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime) {
             GraphicsDevice.Clear(Color.CornflowerBlue);
-
+            _spriteBatch.Begin();
             // TODO: Add your drawing code here
-
+            _player.draw(gameTime, _spriteBatch);
+            _spriteBatch.End();
             base.Draw(gameTime);
         }
     }
