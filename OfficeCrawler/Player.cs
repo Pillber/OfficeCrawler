@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Diagnostics;
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 
 namespace OfficeCrawler {
@@ -22,27 +23,27 @@ namespace OfficeCrawler {
             currentInsult = "no u";
         }
 
-        public void setTexture(Texture2D newTex) {
+        public void SetTexture(Texture2D newTex) {
             this.sprite = newTex;
         }
 
-        public void addFont(SpriteFont font) {
+        public void AddFont(SpriteFont font) {
             this.insultFont = font;
         }
 
-        public void draw(GameTime gameTime, SpriteBatch spriteBatch) {
+        public void Draw(GameTime gameTime, SpriteBatch spriteBatch) {
             spriteBatch.Draw(sprite, pos, Color.White);
             if(!moving) {
                 spriteBatch.DrawString(insultFont, currentInsult, Vector2.Zero, Color.Black);
             }
         }
 
-        public void update(GameTime gameTime) {
-            getKeyBoardInput(gameTime);
-            getMouseInput();
+        public void Update(GameTime gameTime) {
+            GetKeyBoardInput(gameTime);
+            GetMouseInput();
         }
 
-        private void getKeyBoardInput(GameTime gameTime) {
+        private void GetKeyBoardInput(GameTime gameTime) {
             KeyboardState keyState = Keyboard.GetState();
             if (moving) {
                 if (keyState.IsKeyDown(Keys.W)) {
@@ -75,12 +76,18 @@ namespace OfficeCrawler {
             previousKeyboardState = keyState;
         }
 
-        private void getMouseInput() {
+        private void GetMouseInput() {
             MouseState mouseState = Mouse.GetState();
             if(mouseState.RightButton == ButtonState.Pressed && previousMouseState.RightButton != ButtonState.Pressed) {
                 moving = !moving;
             }
             previousMouseState = mouseState;
+        }
+
+        public void GetTyping(object sender, TextInputEventArgs e) {
+            //Nvorbis
+            var pressedKey = e.Key;
+            Debug.Print(pressedKey.ToString());
         }
 
     }

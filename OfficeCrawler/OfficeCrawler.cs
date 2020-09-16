@@ -19,7 +19,9 @@ namespace OfficeCrawler {
         protected override void Initialize() {
             // TODO: Add your initialization logic here
             _player = new Player(null, Vector2.Zero);
+            Window.TextInput += _player.GetTyping;
             base.Initialize();
+
         }
 
         protected override void LoadContent() {
@@ -27,8 +29,8 @@ namespace OfficeCrawler {
 
             // TODO: use this.Content to load your game content here
             Texture2D playerTex = Content.Load<Texture2D>("office_crawler_proto_final");
-            _player.setTexture(playerTex);
-            _player.addFont(Content.Load<SpriteFont>("insult"));
+            _player.SetTexture(playerTex);
+            _player.AddFont(Content.Load<SpriteFont>("insult"));
         }
 
         protected override void Update(GameTime gameTime) {
@@ -36,7 +38,7 @@ namespace OfficeCrawler {
                 Exit();
 
             // TODO: Add your update logic here
-            _player.update(gameTime);
+            _player.Update(gameTime);
             base.Update(gameTime);
         }
 
@@ -44,9 +46,10 @@ namespace OfficeCrawler {
             GraphicsDevice.Clear(Color.CornflowerBlue);
             _spriteBatch.Begin();
             // TODO: Add your drawing code here
-            _player.draw(gameTime, _spriteBatch);
+            _player.Draw(gameTime, _spriteBatch);
             _spriteBatch.End();
             base.Draw(gameTime);
         }
     }
 }
+
