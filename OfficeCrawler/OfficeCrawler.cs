@@ -1,7 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 using System.Reflection.Metadata;
+using System.Threading;
+using System.Windows;
 
 namespace OfficeCrawler {
     public class OfficeCrawler : Game {
@@ -19,9 +22,8 @@ namespace OfficeCrawler {
         protected override void Initialize() {
             // TODO: Add your initialization logic here
             _player = new Player(null, Vector2.Zero);
-            Window.TextInput += _player.GetTyping;
             base.Initialize();
-
+            this.Window.TextInput += _player.GetTyping;
         }
 
         protected override void LoadContent() {

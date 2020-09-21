@@ -14,7 +14,8 @@ namespace OfficeCrawler {
         public string currentInsult;
         private SpriteFont insultFont;
         private MouseState previousMouseState;
-        private KeyboardState previousKeyboardState;
+        public Insult insult;
+        private string correctInsult = "your stupid lol";
 
         public Player(Texture2D sprite, Vector2 pos) {
             this.sprite = sprite;
@@ -33,14 +34,17 @@ namespace OfficeCrawler {
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch) {
             spriteBatch.Draw(sprite, pos, Color.White);
-            if(!moving) {
-                spriteBatch.DrawString(insultFont, currentInsult, Vector2.Zero, Color.Black);
+            spriteBatch.DrawString(insultFont, currentInsult, Vector2.Zero, Color.Black);
+            if(insult != null) {
+                insult.Draw(spriteBatch);
             }
         }
 
         public void Update(GameTime gameTime) {
             GetKeyBoardInput(gameTime);
             GetMouseInput();
+            if (insult != null)
+                insult.Update(this);
         }
 
         private void GetKeyBoardInput(GameTime gameTime) {
@@ -58,22 +62,7 @@ namespace OfficeCrawler {
                 if (keyState.IsKeyDown(Keys.D)) {
                     pos.X += moveSpeed;
                 }
-            } else {
-                Keys[] enteredKeys = keyState.GetPressedKeys();
-                if(enteredKeys.Length > 0) {
-                    Keys enteredKey = keyState.GetPressedKeys()[0];
-                    if (enteredKey == Keys.Back) {
-                        if(currentInsult.Length > 1) {
-                            currentInsult = currentInsult.Substring(0, currentInsult.Length - 2);
-                        }
-                    } else if (enteredKey == Keys.Space) {
-                        currentInsult += " ";
-                    } else {
-                        currentInsult += enteredKey.ToString().ToLower();
-                    }
-                }
             }
-            previousKeyboardState = keyState;
         }
 
         private void GetMouseInput() {
@@ -81,14 +70,64 @@ namespace OfficeCrawler {
             if(mouseState.RightButton == ButtonState.Pressed && previousMouseState.RightButton != ButtonState.Pressed) {
                 moving = !moving;
             }
+            if(moving && currentInsult == correctInsult) {
+                if (mouseState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton != ButtonState.Pressed) {
+                    insult = new Insult(pos, sprite, 2, new Vector2(mouseState.X, mouseState.Y));
+                    correctInsult = string.Empty;
+                }
+                    
+            }
             previousMouseState = mouseState;
         }
 
         public void GetTyping(object sender, TextInputEventArgs e) {
-            //Nvorbis
-            var pressedKey = e.Key;
-            Debug.Print(pressedKey.ToString());
+            if(!moving) {
+                char c = e.Character;
+                switch(c) {
+                    case '\b':
+                        if (currentInsult.Length > 0)
+                            currentInsult = currentInsult.Substring(0, currentInsult.Length - 1);
+                        break;
+                    default:
+                        currentInsult += c;
+                        break;
+                }
+                
+            }
+        }
+    }
+
+    class Insult {
+        private Vector2 position;
+        private Texture2D texture;
+        private float speed;
+        private float xMovement;
+        private float yMovement;
+
+        public Insult(Vector2 position, Texture2D texture, float speed, Vector2 mousePos) {
+            this.position = position;
+            this.speed = speed;
+            this.texture = texture;
+
+            xMovement = (position.X > mousePos.X) ? 1 : -1;
+            yMovement = (position.Y > mousePos.Y) ? 1 : -1;
+
+
+
         }
 
+
+        public void Update(Player player) {
+            if(position.X < 0 || position.Y < 0) {
+                player.insult = null;
+            }
+
+            position.X -= xMovement * speed;
+            position.Y -= yMovement * speed;
+        }
+
+        public void Draw(SpriteBatch spriteBatch) {
+            spriteBatch.Draw(texture, position, Color.White);
+        }
     }
 }
