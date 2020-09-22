@@ -1,10 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using System;
-using System.Reflection.Metadata;
-using System.Threading;
-using System.Windows;
 
 namespace OfficeCrawler {
     public class OfficeCrawler : Game {
@@ -12,11 +8,14 @@ namespace OfficeCrawler {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         private Player _player;
+        public const int Scale = 3;
 
         public OfficeCrawler() {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
+            _graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+            _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
         }
 
         protected override void Initialize() {
@@ -24,6 +23,10 @@ namespace OfficeCrawler {
             _player = new Player(null, Vector2.Zero);
             base.Initialize();
             this.Window.TextInput += _player.GetTyping;
+            _graphics.IsFullScreen = true;
+            _graphics.ApplyChanges();
+            _player.GameWidth = _graphics.PreferredBackBufferWidth;
+            _player.GameHeight = _graphics.PreferredBackBufferHeight;
         }
 
         protected override void LoadContent() {

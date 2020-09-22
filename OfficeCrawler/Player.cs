@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 
 namespace OfficeCrawler {
@@ -13,9 +14,12 @@ namespace OfficeCrawler {
         public bool moving;
         public string currentInsult;
         private SpriteFont insultFont;
-        private MouseState previousMouseState;
+        private KeyboardState previousKeyState;
         public Insult insult;
-        private string correctInsult = "your stupid lol";
+        private readonly string correctInsult = "no u";
+        public int GameWidth { get;  set; }
+        public int GameHeight { get; set; }
+        
 
         public Player(Texture2D sprite, Vector2 pos) {
             this.sprite = sprite;
@@ -33,8 +37,9 @@ namespace OfficeCrawler {
         }
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch) {
-            spriteBatch.Draw(sprite, pos, Color.White);
-            spriteBatch.DrawString(insultFont, currentInsult, Vector2.Zero, Color.Black);
+            Vector2 insultSize = insultFont.MeasureString(currentInsult);
+            spriteBatch.Draw(sprite, pos, null, Color.White, 0, new Vector2(sprite.Width / 2, sprite.Height / 2), OfficeCrawler.Scale, SpriteEffects.None, 1);
+            spriteBatch.DrawString(insultFont, currentInsult, new Vector2(GameWidth / 2 - insultSize.X / 2, GameHeight - insultSize.Y), Color.Black);
             if(insult != null) {
                 insult.Draw(spriteBatch);
             }
@@ -42,7 +47,6 @@ namespace OfficeCrawler {
 
         public void Update(GameTime gameTime) {
             GetKeyBoardInput(gameTime);
-            GetMouseInput();
             if (insult != null)
                 insult.Update(this);
         }
@@ -62,22 +66,27 @@ namespace OfficeCrawler {
                 if (keyState.IsKeyDown(Keys.D)) {
                     pos.X += moveSpeed;
                 }
+                //TODO: diagonal insult launching
+                if (insult == null) {
+                    if (keyState.IsKeyDown(Keys.I)) {
+                        insult = new Insult(pos, sprite, 5, 0, 1);
+                        currentInsult = string.Empty;
+                    } else if (keyState.IsKeyDown(Keys.J)) {
+                        insult = new Insult(pos, sprite, 5, 1, 0);
+                        currentInsult = string.Empty;
+                    } else if (keyState.IsKeyDown(Keys.K)) {
+                        insult = new Insult(pos, sprite, 5, 0, -1);
+                        currentInsult = string.Empty;
+                    } else if (keyState.IsKeyDown(Keys.L)) {
+                        insult = new Insult(pos, sprite, 5, -1, 0);
+                        currentInsult = string.Empty;
+                    }
+                }
             }
-        }
-
-        private void GetMouseInput() {
-            MouseState mouseState = Mouse.GetState();
-            if(mouseState.RightButton == ButtonState.Pressed && previousMouseState.RightButton != ButtonState.Pressed) {
+            if(keyState.IsKeyDown(Keys.Enter) && previousKeyState.IsKeyUp(Keys.Enter)) {
                 moving = !moving;
             }
-            if(moving && currentInsult == correctInsult) {
-                if (mouseState.LeftButton == ButtonState.Pressed && previousMouseState.LeftButton != ButtonState.Pressed) {
-                    insult = new Insult(pos, sprite, 2, new Vector2(mouseState.X, mouseState.Y));
-                    correctInsult = string.Empty;
-                }
-                    
-            }
-            previousMouseState = mouseState;
+            previousKeyState = keyState;
         }
 
         public void GetTyping(object sender, TextInputEventArgs e) {
@@ -104,21 +113,17 @@ namespace OfficeCrawler {
         private float xMovement;
         private float yMovement;
 
-        public Insult(Vector2 position, Texture2D texture, float speed, Vector2 mousePos) {
+        public Insult(Vector2 position, Texture2D texture, float speed, float xMovement, float yMovement) {
             this.position = position;
             this.speed = speed;
             this.texture = texture;
-
-            xMovement = (position.X > mousePos.X) ? 1 : -1;
-            yMovement = (position.Y > mousePos.Y) ? 1 : -1;
-
-
-
+            this.xMovement = xMovement;
+            this.yMovement = yMovement;
         }
 
 
         public void Update(Player player) {
-            if(position.X < 0 || position.Y < 0) {
+            if(position.X < 0 || position.Y < 0 || position.X > player.GameWidth || position.Y > player.GameHeight) {
                 player.insult = null;
             }
 
