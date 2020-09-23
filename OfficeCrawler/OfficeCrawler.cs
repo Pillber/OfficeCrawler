@@ -38,20 +38,31 @@ namespace OfficeCrawler {
             _player.AddFont(Content.Load<SpriteFont>("insult"));
         }
 
+        private Enemy _enemy;
         protected override void Update(GameTime gameTime) {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
-
+            if(_player.moving && Keyboard.GetState().IsKeyDown(Keys.Space)) {
+                _enemy = new Enemy(_player.GetTexture(), new Vector2(_graphics.PreferredBackBufferWidth / 2, _graphics.PreferredBackBufferHeight / 2));
+            }
+            if(_enemy != null) {
+                _enemy.Update(gameTime, _player);
+            }
             // TODO: Add your update logic here
             _player.Update(gameTime);
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime) {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
-            _spriteBatch.Begin();
+            if (_player.moving)
+                GraphicsDevice.Clear(Color.CornflowerBlue);
+            else
+                GraphicsDevice.Clear(Color.PaleVioletRed);
+            _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
             // TODO: Add your drawing code here
             _player.Draw(gameTime, _spriteBatch);
+            if(_enemy != null)
+                _enemy.Draw(gameTime, _spriteBatch);
             _spriteBatch.End();
             base.Draw(gameTime);
         }

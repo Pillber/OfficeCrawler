@@ -32,6 +32,10 @@ namespace OfficeCrawler {
             this.sprite = newTex;
         }
 
+        public Texture2D GetTexture() {
+            return sprite;
+        }
+
         public void AddFont(SpriteFont font) {
             this.insultFont = font;
         }
@@ -66,7 +70,6 @@ namespace OfficeCrawler {
                 if (keyState.IsKeyDown(Keys.D)) {
                     pos.X += moveSpeed;
                 }
-                //TODO: diagonal insult launching
                 if (insult == null) {
                     if (keyState.IsKeyDown(Keys.I)) {
                         insult = new Insult(pos, sprite, 5, 0, 1);
@@ -79,6 +82,18 @@ namespace OfficeCrawler {
                         currentInsult = string.Empty;
                     } else if (keyState.IsKeyDown(Keys.L)) {
                         insult = new Insult(pos, sprite, 5, -1, 0);
+                        currentInsult = string.Empty;
+                    } else if(keyState.IsKeyDown(Keys.U)) {
+                        insult = new Insult(pos, sprite, 5, 1, 1);
+                        currentInsult = string.Empty;
+                    } else if (keyState.IsKeyDown(Keys.O)) {
+                        insult = new Insult(pos, sprite, 5, -1, 1);
+                        currentInsult = string.Empty;
+                    } else if (keyState.IsKeyDown(Keys.N)) {
+                        insult = new Insult(pos, sprite, 5, 1, -1);
+                        currentInsult = string.Empty;
+                    } else if (keyState.IsKeyDown(Keys.OemPeriod)) {
+                        insult = new Insult(pos, sprite, 5, -1, -1);
                         currentInsult = string.Empty;
                     }
                 }
@@ -107,11 +122,12 @@ namespace OfficeCrawler {
     }
 
     class Insult {
-        private Vector2 position;
+        public Vector2 position;
         private Texture2D texture;
         private float speed;
         private float xMovement;
         private float yMovement;
+        public Rectangle BoundingBox;
 
         public Insult(Vector2 position, Texture2D texture, float speed, float xMovement, float yMovement) {
             this.position = position;
@@ -119,11 +135,14 @@ namespace OfficeCrawler {
             this.texture = texture;
             this.xMovement = xMovement;
             this.yMovement = yMovement;
+            BoundingBox = new Rectangle((int) position.X, (int) position.Y, texture.Width, texture.Height);
         }
 
 
         public void Update(Player player) {
-            if(position.X < 0 || position.Y < 0 || position.X > player.GameWidth || position.Y > player.GameHeight) {
+            BoundingBox.X = (int) position.X;
+            BoundingBox.Y = (int) position.Y;
+            if (position.X < 0 || position.Y < 0 || position.X > player.GameWidth || position.Y > player.GameHeight) {
                 player.insult = null;
             }
 
