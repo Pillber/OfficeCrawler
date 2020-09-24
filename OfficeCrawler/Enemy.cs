@@ -10,6 +10,7 @@ namespace OfficeCrawler {
         private Vector2 position;
         private Color currentColor = Color.IndianRed;
         private Rectangle BoundingBox;
+        private readonly float moveSpeed = 2;
         public bool Alive { get; set; }
 
         
@@ -22,6 +23,16 @@ namespace OfficeCrawler {
 
 
         public void Update(GameTime gameTime, Player player) {
+            if (position.X > player.pos.X) {
+                position.X -= moveSpeed;
+            } else if (position.X < player.pos.X) {
+                position.X += moveSpeed;
+            }
+            if(position.Y > player.pos.Y) {
+                position.Y -= moveSpeed;
+            } else if(position.Y < player.pos.Y) {
+                position.Y += moveSpeed;
+            }
             BoundingBox.X = (int)position.X - sprite.Width * OfficeCrawler.Scale / 2;
             BoundingBox.Y = (int)position.Y - sprite.Width * OfficeCrawler.Scale / 2;
             if(player.insult != null) {
@@ -34,6 +45,9 @@ namespace OfficeCrawler {
                 }
             } else {
                 currentColor = Color.Beige;
+            }
+            if(BoundingBox.Intersects(player.BoundingBox)) {
+                player.health -= 1;
             }
         }
 

@@ -1,16 +1,14 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using System;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 
 namespace OfficeCrawler {
     class Player {
 
         private Texture2D sprite;
-        private Vector2 pos;
+        public Vector2 pos;
         private readonly float moveSpeed = 5;
         public bool moving;
         public string currentInsult;
@@ -20,17 +18,23 @@ namespace OfficeCrawler {
         private readonly string correctInsult = "no u";
         public int GameWidth { get;  set; }
         public int GameHeight { get; set; }
-        
+        public Rectangle BoundingBox;
+        public int health;
+        public bool Alive { get; set; }
+
 
         public Player(Texture2D sprite, Vector2 pos) {
             this.sprite = sprite;
             this.pos = pos;
             moving = true;
             currentInsult = "no u";
+            health = 1;
+            Alive = true;
         }
 
         public void SetTexture(Texture2D newTex) {
             this.sprite = newTex;
+            BoundingBox = new Rectangle((int)pos.X - sprite.Width * OfficeCrawler.Scale / 2, (int)pos.Y - sprite.Width * OfficeCrawler.Scale / 2, sprite.Width * OfficeCrawler.Scale, sprite.Height * OfficeCrawler.Scale);
         }
 
         public Texture2D GetTexture() {
@@ -44,16 +48,28 @@ namespace OfficeCrawler {
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch) {
             Vector2 insultSize = insultFont.MeasureString(currentInsult);
             spriteBatch.Draw(sprite, pos, null, Color.White, 0, new Vector2(sprite.Width / 2, sprite.Height / 2), OfficeCrawler.Scale, SpriteEffects.None, 1);
-            spriteBatch.DrawString(insultFont, currentInsult, new Vector2(GameWidth / 2 - insultSize.X / 2, GameHeight - insultSize.Y), Color.Black);
-            if(insult != null) {
+            if(currentInsult == correctInsult) {
+                spriteBatch.DrawString(insultFont, currentInsult, new Vector2(GameWidth / 2 - insultSize.X / 2, GameHeight - insultSize.Y), Color.LawnGreen);
+            } else {
+                spriteBatch.DrawString(insultFont, currentInsult, new Vector2(GameWidth / 2 - insultSize.X / 2, GameHeight - insultSize.Y), Color.Black);
+            }
+            
+            if (insult != null) {
                 insult.Draw(spriteBatch);
             }
+            string score = "Score: " + ((int) gameTime.TotalGameTime.TotalSeconds).ToString();
+            Vector2 scoreSize = insultFont.MeasureString(score);
+            spriteBatch.DrawString(insultFont, score.ToString(), new Vector2(GameWidth / 2 - scoreSize.X, 0), Color.Black);
         }
 
         public void Update(GameTime gameTime) {
             GetKeyBoardInput(gameTime);
+            BoundingBox.X = (int)pos.X - sprite.Width * OfficeCrawler.Scale / 2;
+            BoundingBox.Y = (int)pos.Y - sprite.Width * OfficeCrawler.Scale / 2;
             if (insult != null)
                 insult.Update(this);
+            if (health <= 0)
+                Alive = false;
         }
 
         private void GetKeyBoardInput(GameTime gameTime) {
@@ -106,7 +122,6 @@ namespace OfficeCrawler {
                 moving = !moving;
             }
             previousKeyState = keyState;
-            Debug.WriteLine("\"" + currentInsult + "\" " + "\"" + correctInsult + "\"");
         }
 
         public void GetTyping(object sender, TextInputEventArgs e) {

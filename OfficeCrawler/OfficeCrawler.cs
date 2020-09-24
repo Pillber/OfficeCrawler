@@ -2,12 +2,14 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Collections.Generic;
 
-/*TODO:
- * Basic Enemy AI
- * Timers for enemy spawning
- * Enemy List for more than one enemy on screen.
- * Enemy damage to player (lose state)
+/*TODO
+ *
+ *
+ *
+ *
+ *
  */
 
 
@@ -48,17 +50,27 @@ namespace OfficeCrawler {
             _player.AddFont(Content.Load<SpriteFont>("insult"));
         }
 
-        private Enemy _enemy;
+        private List<Enemy> _enemies = new List<Enemy>();
+        private float _respawnSpeed = 3f;
         protected override void Update(GameTime gameTime) {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
-            if(_player.moving && Keyboard.GetState().IsKeyDown(Keys.Space)) {
-                _enemy = new Enemy(_player.GetTexture(), new Vector2(Rand.Next(0, _graphics.PreferredBackBufferWidth), Rand.Next(0, _graphics.PreferredBackBufferHeight)));
+            if (!_player.Alive)
+                Exit();
+            float elapsedTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            _respawnSpeed -= elapsedTime;
+            if(_respawnSpeed <= 0) {
+                _enemies.Add(new Enemy(_player.GetTexture(), new Vector2(Rand.Next(0, _graphics.PreferredBackBufferWidth), Rand.Next(0, _graphics.PreferredBackBufferHeight))));
+                _respawnSpeed = 3f;
             }
-            if(_enemy != null) {
-                _enemy.Update(gameTime, _player);
-                if(!_enemy.Alive )
-                    _enemy = null;
+               
+            if(_enemies.Count > 0) {
+                for (int index = 0; index < _enemies.Count; index++) {
+                    _enemies[index].Update(gameTime, _player);
+                    if (!_enemies[index].Alive)
+                        _enemies.RemoveAt(index);
+                }
+                
             }
             // TODO: Add your update logic here
             _player.Update(gameTime);
@@ -73,8 +85,11 @@ namespace OfficeCrawler {
             _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
             // TODO: Add your drawing code here
             _player.Draw(gameTime, _spriteBatch);
-            if(_enemy != null)
-                _enemy.Draw(gameTime, _spriteBatch);
+            if (_enemies.Count > 0) {
+                foreach (Enemy enemy in _enemies) {
+                    enemy.Draw(gameTime, _spriteBatch);
+                }
+            }
             _spriteBatch.End();
             base.Draw(gameTime);
         }
