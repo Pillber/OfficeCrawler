@@ -19,8 +19,11 @@ If you are interested in running yourself, there are some steps to follow:
     * Mobile Development with .NET
     * Universal Windows Platform development
     * .NET desktop development
-2. When the installation finishes, add the "Monogame project templates" extenstion to Visual Studio.
+2. When the installation finishes, add the "Monogame project templates" extenstion and GitHub for Visual Studio to your installation.
 3. Install the MGCB Editor (for managing the content of the game) by running the following commands in a command prompt:
     * ```dotnet tool install --global dotnet-mgcb-editor```
     * ```mgcb-editor --register```
-4. Debug the application by pressing the button in the toolbar or F5.
+4. Use GitHub to clone the repository to your local machine.
+5. Debug the application by pressing the button in the toolbar or F5.
+
+
