@@ -1,9 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using System.Data.SqlTypes;
-using System.Diagnostics;
-using System.Threading.Tasks.Sources;
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 
 namespace OfficeCrawler {
