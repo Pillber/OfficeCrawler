@@ -1,6 +1,17 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
+using System.Collections.Generic;
+
+/*TODO
+ *
+ *
+ *
+ *
+ *
+ */
+
 
 namespace OfficeCrawler {
     public class OfficeCrawler : Game {
@@ -8,7 +19,8 @@ namespace OfficeCrawler {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         private Player _player;
-        public const int Scale = 3;
+        private static Random Rand = new Random();
+        public const int Scale = 4;
 
         public OfficeCrawler() {
             _graphics = new GraphicsDeviceManager(this);
@@ -27,6 +39,7 @@ namespace OfficeCrawler {
             _graphics.ApplyChanges();
             _player.GameWidth = _graphics.PreferredBackBufferWidth;
             _player.GameHeight = _graphics.PreferredBackBufferHeight;
+            Window.AllowAltF4 = true;
         }
 
         protected override void LoadContent() {
@@ -38,15 +51,28 @@ namespace OfficeCrawler {
             _player.AddFont(Content.Load<SpriteFont>("insult"));
         }
 
-        private Enemy _enemy;
+        private List<Enemy> _enemies = new List<Enemy>();
+        private float _respawnSpeed = 3f;
         protected override void Update(GameTime gameTime) {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
-            if(_player.moving && Keyboard.GetState().IsKeyDown(Keys.Space)) {
-                _enemy = new Enemy(_player.GetTexture(), new Vector2(_graphics.PreferredBackBufferWidth / 2, _graphics.PreferredBackBufferHeight / 2));
+            if (!_player.Alive) {
+                if (Keyboard.GetState().IsKeyDown(Keys.Space)) {
+                    Reset();
+                }
             }
-            if(_enemy != null) {
-                _enemy.Update(gameTime, _player);
+            float elapsedTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            _respawnSpeed -= elapsedTime;
+            if(_respawnSpeed <= 0) {
+                _enemies.Add(new Enemy(_player.GetTexture(), new Vector2(Rand.Next(0, _graphics.PreferredBackBufferWidth), Rand.Next(0, _graphics.PreferredBackBufferHeight))));
+                _respawnSpeed = 3f;
+            }
+               
+            if(_enemies.Count > 0) {
+                for (int index = 0; index < _enemies.Count; index++) {
+                    _enemies[index].Update(gameTime, _player);
+                    if (!_enemies[index].Alive)
+                        _enemies.RemoveAt(index);
+                }
+                
             }
             // TODO: Add your update logic here
             _player.Update(gameTime);
@@ -54,17 +80,39 @@ namespace OfficeCrawler {
         }
 
         protected override void Draw(GameTime gameTime) {
-            if (_player.moving)
+            if(_player.Alive) {
+                if (_player.moving)
+                    GraphicsDevice.Clear(Color.CornflowerBlue);
+                else
+                    GraphicsDevice.Clear(Color.PaleVioletRed);
+                _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
+                // TODO: Add your drawing code here
+                _player.Draw(gameTime, _spriteBatch);
+                if (_enemies.Count > 0) {
+                    foreach (Enemy enemy in _enemies) {
+                        enemy.Draw(gameTime, _spriteBatch);
+                    }
+                }
+                _spriteBatch.End();
+            } else {
                 GraphicsDevice.Clear(Color.CornflowerBlue);
-            else
-                GraphicsDevice.Clear(Color.PaleVioletRed);
-            _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
-            // TODO: Add your drawing code here
-            _player.Draw(gameTime, _spriteBatch);
-            if(_enemy != null)
-                _enemy.Draw(gameTime, _spriteBatch);
-            _spriteBatch.End();
+                _spriteBatch.Begin();
+                _player.PromptReset(_spriteBatch);
+                _spriteBatch.End();
+            }
+            
             base.Draw(gameTime);
+        }
+
+        private void Reset() {
+            SpriteFont font = _player.GetFont();
+            _player = new Player(_player.GetTexture(), Vector2.Zero);
+            _player.AddFont(font);
+            _player.GameWidth = _graphics.PreferredBackBufferWidth;
+            _player.GameHeight = _graphics.PreferredBackBufferHeight;
+            ResetElapsedTime();
+            Window.TextInput += _player.GetTyping;
+            _enemies = new List<Enemy>();
         }
     }
 }
