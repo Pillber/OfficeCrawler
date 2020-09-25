@@ -20,7 +20,7 @@ namespace OfficeCrawler {
         private SpriteBatch _spriteBatch;
         private Player _player;
         private static Random Rand = new Random();
-        public const int Scale = 3;
+        public const int Scale = 4;
 
         public OfficeCrawler() {
             _graphics = new GraphicsDeviceManager(this);
@@ -39,6 +39,7 @@ namespace OfficeCrawler {
             _graphics.ApplyChanges();
             _player.GameWidth = _graphics.PreferredBackBufferWidth;
             _player.GameHeight = _graphics.PreferredBackBufferHeight;
+            Window.AllowAltF4 = true;
         }
 
         protected override void LoadContent() {
@@ -53,10 +54,11 @@ namespace OfficeCrawler {
         private List<Enemy> _enemies = new List<Enemy>();
         private float _respawnSpeed = 3f;
         protected override void Update(GameTime gameTime) {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
-            if (!_player.Alive)
-                Exit();
+            if (!_player.Alive) {
+                if (Keyboard.GetState().IsKeyDown(Keys.Space)) {
+                    Reset();
+                }
+            }
             float elapsedTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
             _respawnSpeed -= elapsedTime;
             if(_respawnSpeed <= 0) {
@@ -78,20 +80,39 @@ namespace OfficeCrawler {
         }
 
         protected override void Draw(GameTime gameTime) {
-            if (_player.moving)
-                GraphicsDevice.Clear(Color.CornflowerBlue);
-            else
-                GraphicsDevice.Clear(Color.PaleVioletRed);
-            _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
-            // TODO: Add your drawing code here
-            _player.Draw(gameTime, _spriteBatch);
-            if (_enemies.Count > 0) {
-                foreach (Enemy enemy in _enemies) {
-                    enemy.Draw(gameTime, _spriteBatch);
+            if(_player.Alive) {
+                if (_player.moving)
+                    GraphicsDevice.Clear(Color.CornflowerBlue);
+                else
+                    GraphicsDevice.Clear(Color.PaleVioletRed);
+                _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
+                // TODO: Add your drawing code here
+                _player.Draw(gameTime, _spriteBatch);
+                if (_enemies.Count > 0) {
+                    foreach (Enemy enemy in _enemies) {
+                        enemy.Draw(gameTime, _spriteBatch);
+                    }
                 }
+                _spriteBatch.End();
+            } else {
+                GraphicsDevice.Clear(Color.CornflowerBlue);
+                _spriteBatch.Begin();
+                _player.PromptReset(_spriteBatch);
+                _spriteBatch.End();
             }
-            _spriteBatch.End();
+            
             base.Draw(gameTime);
+        }
+
+        private void Reset() {
+            SpriteFont font = _player.GetFont();
+            _player = new Player(_player.GetTexture(), Vector2.Zero);
+            _player.AddFont(font);
+            _player.GameWidth = _graphics.PreferredBackBufferWidth;
+            _player.GameHeight = _graphics.PreferredBackBufferHeight;
+            ResetElapsedTime();
+            Window.TextInput += _player.GetTyping;
+            _enemies = new List<Enemy>();
         }
     }
 }

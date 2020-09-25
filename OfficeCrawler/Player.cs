@@ -1,7 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Data.SqlTypes;
 using System.Diagnostics;
+using System.Threading.Tasks.Sources;
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 
 namespace OfficeCrawler {
@@ -21,6 +23,8 @@ namespace OfficeCrawler {
         public Rectangle BoundingBox;
         public int health;
         public bool Alive { get; set; }
+        private float invincibleTime = -1f;
+        private int scoreInt;
 
 
         public Player(Texture2D sprite, Vector2 pos) {
@@ -28,8 +32,9 @@ namespace OfficeCrawler {
             this.pos = pos;
             moving = true;
             currentInsult = "no u";
-            health = 1;
+            health = 5;
             Alive = true;
+            scoreInt = 0;
         }
 
         public void SetTexture(Texture2D newTex) {
@@ -45,21 +50,33 @@ namespace OfficeCrawler {
             this.insultFont = font;
         }
 
+        public SpriteFont GetFont() {
+            return insultFont;
+        }
+
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch) {
             Vector2 insultSize = insultFont.MeasureString(currentInsult);
-            spriteBatch.Draw(sprite, pos, null, Color.White, 0, new Vector2(sprite.Width / 2, sprite.Height / 2), OfficeCrawler.Scale, SpriteEffects.None, 1);
-            if(currentInsult == correctInsult) {
+            if (invincibleTime > 0) {
+                spriteBatch.Draw(sprite, pos, null, Color.Red, 0, new Vector2(sprite.Width / 2, sprite.Height / 2), OfficeCrawler.Scale, SpriteEffects.None, 1);
+            } else {
+                spriteBatch.Draw(sprite, pos, null, Color.White, 0, new Vector2(sprite.Width / 2, sprite.Height / 2), OfficeCrawler.Scale, SpriteEffects.None, 1);
+            }
+            if (currentInsult == correctInsult) {
                 spriteBatch.DrawString(insultFont, currentInsult, new Vector2(GameWidth / 2 - insultSize.X / 2, GameHeight - insultSize.Y), Color.LawnGreen);
             } else {
                 spriteBatch.DrawString(insultFont, currentInsult, new Vector2(GameWidth / 2 - insultSize.X / 2, GameHeight - insultSize.Y), Color.Black);
+            }
+
+            for (int i = 0; i < health; i++) {
+                spriteBatch.Draw(sprite, new Vector2(sprite.Width * 2 * i + 5, 0), null, Color.Red, 0, Vector2.Zero, 2, SpriteEffects.None, 1);
             }
             
             if (insult != null) {
                 insult.Draw(spriteBatch);
             }
-            string score = "Score: " + ((int) gameTime.TotalGameTime.TotalSeconds).ToString();
+            string score = "Score: " + scoreInt;
             Vector2 scoreSize = insultFont.MeasureString(score);
-            spriteBatch.DrawString(insultFont, score.ToString(), new Vector2(GameWidth / 2 - scoreSize.X, 0), Color.Black);
+            spriteBatch.DrawString(insultFont, score, new Vector2(GameWidth / 2 - scoreSize.X / 2, 0), Color.Black);
         }
 
         public void Update(GameTime gameTime) {
@@ -70,6 +87,14 @@ namespace OfficeCrawler {
                 insult.Update(this);
             if (health <= 0)
                 Alive = false;
+
+            if(invincibleTime != -1) {
+                float elapsedTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+                invincibleTime -= elapsedTime;
+                if(invincibleTime <= 0) {
+                    invincibleTime = -1;
+                }
+            }
         }
 
         private void GetKeyBoardInput(GameTime gameTime) {
@@ -142,6 +167,25 @@ namespace OfficeCrawler {
                 }
                 
             }
+        }
+
+        public void TakeDamage() {
+            if(invincibleTime == -1f) {
+                invincibleTime = 1f;
+                health--;
+            }
+
+        }
+
+        public void PromptReset(SpriteBatch spriteBatch) {
+            string message = "Press Space to restart";
+            Vector2 stringSize = insultFont.MeasureString(message);
+            spriteBatch.DrawString(insultFont, message, new Vector2((GameWidth + stringSize.X) / 2, (GameHeight + stringSize.Y) / 2), Color.Black);
+
+        }
+
+        public void Score() {
+            this.scoreInt++;
         }
     }
 
