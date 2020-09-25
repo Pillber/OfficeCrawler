@@ -22,8 +22,7 @@ namespace OfficeCrawler {
         public bool Alive { get; set; }
         private float invincibleTime = -1f;
         private int scoreInt;
-
-
+      
         public Player(Texture2D sprite, Vector2 pos) {
             this.sprite = sprite;
             this.pos = pos;
