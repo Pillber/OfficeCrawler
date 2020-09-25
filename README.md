@@ -26,4 +26,6 @@ If you are interested in running yourself, there are some steps to follow:
 4. Use GitHub to clone the repository to your local machine.
 5. Debug the application by pressing the button in the toolbar or F5.
 
+## Screenshots
+![AltText](https://github.com/Pillber/OfficeCrawler/blob/master/OfficeCrawlerProgress1.png?raw=true "A screenshot of the gameplay")
 
