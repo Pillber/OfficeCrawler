@@ -20,7 +20,7 @@ namespace OfficeCrawler {
             BoundingBox = new Rectangle((int)position.X - sprite.Width * OfficeCrawler.Scale / 2, (int)position.Y - sprite.Width * OfficeCrawler.Scale / 2, sprite.Width * OfficeCrawler.Scale, sprite.Height * OfficeCrawler.Scale);
             Alive = true;
 
-
+        }
         public void Update(GameTime gameTime, Player player) {
             if (position.X > player.pos.X) {
                 position.X -= moveSpeed;
