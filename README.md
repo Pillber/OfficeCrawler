@@ -12,6 +12,15 @@ We have encountered many challenges. The event system in particular was very dif
 ## Next Steps
 We believe that our next steps should include more playtesting to make sure that our gameplay prototype is fully valid. After that, restructuring of code and other refactoring will need to be initiated. Our current codebase is horrible, but works. That should change next, if and only if, our gameplay is engaging enough.
 
+## To Get The Latest Updates
+This ensures you are on the most up-to-date version of our game
+1. Open up your command prompt navigate to where you have saved the cloned repository
+   * The default that Visual Studio 2019 saves imported git repositories is C:\Users\Your_User\source\repos\OfficeCrawler
+2. Once you have navigated to the folder type `git checkout branch` where `branch` is the name of the branch where you want to receive updates
+   * The master branch is the one we recommend updating, you would type `git checkout master`, but if you want the development branch just type `git checkout develop`
+3. Once you are in the branch type `git pull origin branch` where `branch` is the name of the branch you want to update
+4. You should now have the latest changes to our game
+
 ## Running Yourself
 If you are interested in running yourself, there are some steps to follow:
 1. Install Visual Studio 2019 (any version, we use community) and add the following modules to the installation:
