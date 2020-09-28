@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Linq;
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 
 namespace OfficeCrawler {
@@ -14,7 +15,7 @@ namespace OfficeCrawler {
         private SpriteFont insultFont;
         private KeyboardState previousKeyState;
         public Insult insult;
-        private readonly string correctInsult = "no u";
+        private readonly InsultString[] correctInsults = new InsultString[3];
         public int GameWidth { get;  set; }
         public int GameHeight { get; set; }
         public Rectangle BoundingBox;
@@ -22,6 +23,8 @@ namespace OfficeCrawler {
         public bool Alive { get; set; }
         private float invincibleTime = -1f;
         private int scoreInt;
+        private bool FacingRight;
+
 
 
         public Player(Texture2D sprite, Vector2 pos) {
@@ -32,6 +35,9 @@ namespace OfficeCrawler {
             health = 5;
             Alive = true;
             scoreInt = 0;
+            correctInsults[0] = new InsultString("no u", 1f, 6);
+            correctInsults[1] = new InsultString("your stupid lol", 5f, 6);
+            correctInsults[2] = new InsultString("your mom you're dad", 10f, 15);
         }
 
         public void SetTexture(Texture2D newTex) {
@@ -54,11 +60,11 @@ namespace OfficeCrawler {
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch) {
             Vector2 insultSize = insultFont.MeasureString(currentInsult);
             if (invincibleTime > 0) {
-                spriteBatch.Draw(sprite, pos, null, Color.Red, 0, new Vector2(sprite.Width / 2, sprite.Height / 2), OfficeCrawler.Scale, SpriteEffects.None, 1);
+                spriteBatch.Draw(sprite, pos, null, Color.Red, 0, new Vector2(sprite.Width / 2, sprite.Height / 2), OfficeCrawler.Scale, (FacingRight) ? SpriteEffects.None : SpriteEffects.FlipHorizontally, 1);
             } else {
-                spriteBatch.Draw(sprite, pos, null, Color.White, 0, new Vector2(sprite.Width / 2, sprite.Height / 2), OfficeCrawler.Scale, SpriteEffects.None, 1);
+                spriteBatch.Draw(sprite, pos, null, Color.White, 0, new Vector2(sprite.Width / 2, sprite.Height / 2), OfficeCrawler.Scale, (FacingRight) ? SpriteEffects.None : SpriteEffects.FlipHorizontally, 1);
             }
-            if (currentInsult == correctInsult) {
+            if (InsultIsCorrect()){
                 spriteBatch.DrawString(insultFont, currentInsult, new Vector2(GameWidth / 2 - insultSize.X / 2, GameHeight - insultSize.Y), Color.LawnGreen);
             } else {
                 spriteBatch.DrawString(insultFont, currentInsult, new Vector2(GameWidth / 2 - insultSize.X / 2, GameHeight - insultSize.Y), Color.Black);
@@ -67,6 +73,11 @@ namespace OfficeCrawler {
             for (int i = 0; i < health; i++) {
                 spriteBatch.Draw(sprite, new Vector2(sprite.Width * 2 * i + 5, 0), null, Color.Red, 0, Vector2.Zero, 2, SpriteEffects.None, 1);
             }
+
+            for(int i = 0; i < correctInsults.Length; i++) {
+                Vector2 stringSize = insultFont.MeasureString(correctInsults[i].Name);
+                spriteBatch.DrawString(insultFont, correctInsults[i].Name, new Vector2(GameWidth - stringSize.X - 10, i * stringSize.Y), (correctInsults[i].Name.Contains(currentInsult) && currentInsult != string.Empty) ? Color.LawnGreen : Color.DimGray);
+            }
             
             if (insult != null) {
                 insult.Draw(spriteBatch);
@@ -74,6 +85,14 @@ namespace OfficeCrawler {
             string score = "Score: " + scoreInt;
             Vector2 scoreSize = insultFont.MeasureString(score);
             spriteBatch.DrawString(insultFont, score, new Vector2(GameWidth / 2 - scoreSize.X / 2, 0), Color.Black);
+        }
+
+        private bool InsultIsCorrect() {
+            foreach(InsultString insult in correctInsults) {
+                if (currentInsult == insult.Name)
+                    return true;
+            }
+            return false;
         }
 
         public void Update(GameTime gameTime) {
@@ -102,25 +121,37 @@ namespace OfficeCrawler {
                 }
                 if (keyState.IsKeyDown(Keys.A)) {
                     pos.X -= moveSpeed;
+                    FacingRight = false;
                 }
                 if (keyState.IsKeyDown(Keys.S)) {
                     pos.Y += moveSpeed;
                 }
                 if (keyState.IsKeyDown(Keys.D)) {
                     pos.X += moveSpeed;
+                    FacingRight = true;
                 }
-                if (insult == null && currentInsult == correctInsult) {
+                if (insult == null && InsultIsCorrect()) {
+                    int speed = 5;
+                    float damage = 1;
+                    foreach(InsultString insult in correctInsults) {
+                        if (currentInsult == insult.Name) {
+                            speed = insult.Speed;
+                            damage = insult.Damage;
+                            break;
+                        }
+                    }
+
                     if (keyState.IsKeyDown(Keys.I)) {
-                        insult = new Insult(pos, sprite, 5, 0, 1);
+                        insult = new Insult(pos, sprite, speed, 0, 1);
                         currentInsult = string.Empty;
                     } else if (keyState.IsKeyDown(Keys.J)) {
-                        insult = new Insult(pos, sprite, 5, 1, 0);
+                        insult = new Insult(pos, sprite, speed, 1, 0);
                         currentInsult = string.Empty;
                     } else if (keyState.IsKeyDown(Keys.K)) {
-                        insult = new Insult(pos, sprite, 5, 0, -1);
+                        insult = new Insult(pos, sprite, speed, 0, -1) ;
                         currentInsult = string.Empty;
                     } else if (keyState.IsKeyDown(Keys.L)) {
-                        insult = new Insult(pos, sprite, 5, -1, 0);
+                        insult = new Insult(pos, sprite, speed, -1, 0);
                         currentInsult = string.Empty;
                     }
                     /*
@@ -149,6 +180,8 @@ namespace OfficeCrawler {
         public void GetTyping(object sender, TextInputEventArgs e) {
             if(!moving) {
                 char c = e.Character;
+                if (e.Key == Keys.Escape)
+                    return;
                 switch(c) {
                     case '\b':
                         if (currentInsult.Length > 0)
@@ -183,6 +216,19 @@ namespace OfficeCrawler {
 
         public void Score() {
             this.scoreInt++;
+        }
+    }
+
+    struct InsultString {
+
+        public string Name;
+        public float Damage;
+        public int Speed;
+
+        public InsultString(string name, float damage, int speed) {
+            Name = name;
+            Damage = damage;
+            Speed = speed;
         }
     }
 

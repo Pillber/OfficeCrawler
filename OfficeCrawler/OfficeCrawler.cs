@@ -6,10 +6,16 @@ using System.Collections.Generic;
 
 /*TODO
  *
- *
- *
- *
- *
+ * Multiple Insult Support
+ *  - Greyed out autocomplete of the closet insult to the one typed (KInda done)
+ * reading and writing files
+ *  -storing insults/ map data
+ * advanced collision detection / tilemap
+ * art
+ * better AI
+ *  -pathfinding
+ * screen scrolling
+ * 
  */
 
 
@@ -46,7 +52,7 @@ namespace OfficeCrawler {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
-            Texture2D playerTex = Content.Load<Texture2D>("office_crawler_proto_final");
+            Texture2D playerTex = Content.Load<Texture2D>("office_crawler_player");
             _player.SetTexture(playerTex);
             _player.AddFont(Content.Load<SpriteFont>("insult"));
         }
@@ -106,7 +112,9 @@ namespace OfficeCrawler {
 
         private void Reset() {
             SpriteFont font = _player.GetFont();
-            _player = new Player(_player.GetTexture(), Vector2.Zero);
+            Texture2D texture = _player.GetTexture();
+            _player = new Player(null, Vector2.Zero);
+            _player.SetTexture(texture);
             _player.AddFont(font);
             _player.GameWidth = _graphics.PreferredBackBufferWidth;
             _player.GameHeight = _graphics.PreferredBackBufferHeight;
