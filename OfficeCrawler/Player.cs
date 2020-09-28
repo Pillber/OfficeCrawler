@@ -27,6 +27,7 @@ namespace OfficeCrawler {
 
 
 
+
         public Player(Texture2D sprite, Vector2 pos) {
             this.sprite = sprite;
             this.pos = pos;
