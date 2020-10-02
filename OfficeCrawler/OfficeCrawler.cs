@@ -15,6 +15,7 @@ using System.Collections.Generic;
  * better AI
  *  -pathfinding
  * screen scrolling
+ * input delay when switching modes (accidently appending movement keys)
  * 
  */
 
@@ -26,7 +27,7 @@ namespace OfficeCrawler {
         private SpriteBatch _spriteBatch;
         private Player _player;
         private static Random Rand = new Random();
-        public const int Scale = 4;
+        public const int Scale = 3;
 
         public OfficeCrawler() {
             _graphics = new GraphicsDeviceManager(this);
