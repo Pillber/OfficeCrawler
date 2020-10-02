@@ -6,7 +6,8 @@ using System.Collections.Generic;
 
 /*TODO
  *
- * 
+ * Multiple Insult Support
+ *  - Greyed out autocomplete of the closet insult to the one typed (KInda done)
  * reading and writing files
  *  -storing insults/ map data
  * advanced collision detection / tilemap
@@ -58,7 +59,7 @@ namespace OfficeCrawler {
         }
 
         private List<Enemy> _enemies = new List<Enemy>();
-        private float _respawnSpeed = 10f;
+        private float _respawnSpeed = 3f;
         protected override void Update(GameTime gameTime) {
             if (!_player.Alive) {
                 if (Keyboard.GetState().IsKeyDown(Keys.Space)) {
@@ -69,7 +70,7 @@ namespace OfficeCrawler {
             _respawnSpeed -= elapsedTime;
             if(_respawnSpeed <= 0) {
                 _enemies.Add(new Enemy(_player.GetTexture(), new Vector2(Rand.Next(0, _graphics.PreferredBackBufferWidth), Rand.Next(0, _graphics.PreferredBackBufferHeight))));
-                _respawnSpeed = 10f;
+                _respawnSpeed = 3f;
             }
                
             if(_enemies.Count > 0) {

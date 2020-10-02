@@ -32,7 +32,7 @@ namespace OfficeCrawler {
             this.sprite = sprite;
             this.pos = pos;
             moving = true;
-            currentInsult = string.Empty;
+            currentInsult = "no u";
             health = 5;
             Alive = true;
             scoreInt = 0;
@@ -77,7 +77,7 @@ namespace OfficeCrawler {
 
             for(int i = 0; i < correctInsults.Length; i++) {
                 Vector2 stringSize = insultFont.MeasureString(correctInsults[i].Name);
-                spriteBatch.DrawString(insultFont, correctInsults[i].Name, new Vector2(GameWidth - stringSize.X - 10, i * stringSize.Y), (!string.IsNullOrEmpty(currentInsult) && correctInsults[i].Name.StartsWith(currentInsult)) ? Color.LawnGreen : Color.DimGray);
+                spriteBatch.DrawString(insultFont, correctInsults[i].Name, new Vector2(GameWidth - stringSize.X - 10, i * stringSize.Y), (correctInsults[i].Name.Contains(currentInsult) && currentInsult != string.Empty) ? Color.LawnGreen : Color.DimGray);
             }
             
             if (insult != null) {

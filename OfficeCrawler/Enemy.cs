@@ -11,29 +11,19 @@ namespace OfficeCrawler {
         private Color currentColor = Color.IndianRed;
         private Rectangle BoundingBox;
         private readonly float moveSpeed = 2;
-        public float DamageRecieved { get; set; }
-        private float MaxHealth { get; set; }
+        public int DamageRecieved { get; set; }
         public bool Alive { get; set; }
         private bool FacingRight;
 
 
-        public Enemy(Texture2D sprite, Vector2 position, float MaxHealth = 2) {
+        public Enemy(Texture2D sprite, Vector2 position) {
             this.sprite = sprite;
             this.position = position;
             BoundingBox = new Rectangle((int)position.X - sprite.Width * OfficeCrawler.Scale / 2, (int)position.Y - sprite.Width * OfficeCrawler.Scale / 2, sprite.Width * OfficeCrawler.Scale, sprite.Height * OfficeCrawler.Scale);
             this.DamageRecieved = 0;
-            this.MaxHealth = MaxHealth;
             Alive = true;
-        }
 
-        //public Enemy(Texture2D sprite, Vector2 position, float MaxHealth) {
-        //    this.sprite = sprite;
-        //    this.position = position;
-        //    BoundingBox = new Rectangle((int)position.X - sprite.Width * OfficeCrawler.Scale / 2, (int)position.Y - sprite.Width * OfficeCrawler.Scale / 2, sprite.Width * OfficeCrawler.Scale, sprite.Height * OfficeCrawler.Scale);
-        //    this.DamageRecieved = 0;
-        //    this.MaxHealth = MaxHealth;
-        //    Alive = true;
-        //}
+        }
         public void Update(GameTime gameTime, Player player) {
             if (position.X > player.pos.X) {
                 position.X -= moveSpeed;
@@ -51,13 +41,10 @@ namespace OfficeCrawler {
             BoundingBox.Y = (int)position.Y - sprite.Width * OfficeCrawler.Scale / 2;
             if (player.insult != null) {
                 if (BoundingBox.Intersects(player.insult.BoundingBox)) {
-                    //currentColor = Color.Black;
-                    DamageRecieved += player.insult.Damage;
-                    if(DamageRecieved >= MaxHealth) {
-                        Alive = false;
-                        player.Score();
-                    }
+                    currentColor = Color.Black;
+                    Alive = false;
                     player.insult = null;
+                    player.Score();
                 } else {
                     currentColor = Color.LightGray;
                 }
