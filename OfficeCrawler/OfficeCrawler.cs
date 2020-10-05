@@ -6,8 +6,7 @@ using System.Collections.Generic;
 
 /*TODO
  *
- * Multiple Insult Support
- *  - Greyed out autocomplete of the closet insult to the one typed (KInda done)
+ * 
  * reading and writing files
  *  -storing insults/ map data
  * advanced collision detection / tilemap
@@ -15,7 +14,6 @@ using System.Collections.Generic;
  * better AI
  *  -pathfinding
  * screen scrolling
- * input delay when switching modes (accidently appending movement keys)
  * 
  */
 
@@ -23,18 +21,12 @@ using System.Collections.Generic;
 namespace OfficeCrawler {
     public class OfficeCrawler : Game {
 
-        //PRIVATE VARIABLES
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         private Player _player;
         private static Random Rand = new Random();
-        private List<Enemy> _enemies = new List<Enemy>();
-        private float _respawnSpeed = 3f;
+        public const int Scale = 4;
 
-        //PUBLIC VARIABLES
-        public const int Scale = 3;
-
-        //CONSTRUCTOR
         public OfficeCrawler() {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
@@ -43,7 +35,6 @@ namespace OfficeCrawler {
             _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
         }
 
-        //Start the game
         protected override void Initialize() {
             // TODO: Add your initialization logic here
             _player = new Player(null, Vector2.Zero);
@@ -56,7 +47,6 @@ namespace OfficeCrawler {
             Window.AllowAltF4 = true;
         }
 
-        //Load any sprites or textures
         protected override void LoadContent() {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
@@ -66,7 +56,8 @@ namespace OfficeCrawler {
             _player.AddFont(Content.Load<SpriteFont>("insult"));
         }
 
-        //GAME LOOP
+        private List<Enemy> _enemies = new List<Enemy>();
+        private float _respawnSpeed = 10f;
         protected override void Update(GameTime gameTime) {
             if (!_player.Alive) {
                 if (Keyboard.GetState().IsKeyDown(Keys.Space)) {
@@ -77,7 +68,7 @@ namespace OfficeCrawler {
             _respawnSpeed -= elapsedTime;
             if(_respawnSpeed <= 0) {
                 _enemies.Add(new Enemy(_player.GetTexture(), new Vector2(Rand.Next(0, _graphics.PreferredBackBufferWidth), Rand.Next(0, _graphics.PreferredBackBufferHeight))));
-                _respawnSpeed = 3f;
+                _respawnSpeed = 10f;
             }
                
             if(_enemies.Count > 0) {
@@ -93,7 +84,6 @@ namespace OfficeCrawler {
             base.Update(gameTime);
         }
 
-        //Render the sprites or textures
         protected override void Draw(GameTime gameTime) {
             if(_player.Alive) {
                 if (_player.moving)
@@ -119,7 +109,6 @@ namespace OfficeCrawler {
             base.Draw(gameTime);
         }
 
-        //Resets the game after it has been played once
         private void Reset() {
             SpriteFont font = _player.GetFont();
             Texture2D texture = _player.GetTexture();
