@@ -5,33 +5,38 @@ using System;
 using System.Collections.Generic;
 
 /*TODO
- *
+ * 
+ * Obstacles in the play area
  * 
  * reading and writing files
  *  -storing insults/ map data
  * advanced collision detection / tilemap
  * art
- * better AI
- *  -pathfinding
  * screen scrolling
+ * Game states (game over, pausing, playing)
  * 
  */
 
 
 namespace OfficeCrawler {
     public class OfficeCrawler : Game {
-        
+
+        # region Private Variables
         //PRIVATE VARIABLES
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         private Player _player;
         private static Random Rand = new Random();
         private List<Enemy> _enemies = new List<Enemy>();
-        private float _respawnSpeed = 10f;
+        private float _respawnSpeed = 5f;
+        #endregion
 
+        #region Public Variables
         //PUBLIC VARIABLES
         public const int Scale = 4;
+        #endregion
 
+        #region Initialization
         //CONSTRUCTOR
         public OfficeCrawler() {
             _graphics = new GraphicsDeviceManager(this);
@@ -63,7 +68,9 @@ namespace OfficeCrawler {
             _player.SetTexture(playerTex);
             _player.AddFont(Content.Load<SpriteFont>("insult"));
         }
+        #endregion
 
+        #region Update And Draw
         //Called every frame, updates player and enemy spawn
         protected override void Update(GameTime gameTime) {
             if (!_player.Alive) {
@@ -75,7 +82,7 @@ namespace OfficeCrawler {
             _respawnSpeed -= elapsedTime;
             if(_respawnSpeed <= 0) {
                 _enemies.Add(new Enemy(_player.GetTexture(), new Vector2(Rand.Next(0, _graphics.PreferredBackBufferWidth), Rand.Next(0, _graphics.PreferredBackBufferHeight))));
-                _respawnSpeed = 10f;
+                _respawnSpeed = 5f;
             }
                
             if(_enemies.Count > 0) {
@@ -116,7 +123,9 @@ namespace OfficeCrawler {
             
             base.Draw(gameTime);
         }
+        #endregion
 
+        #region Reset
         //Resets all the values to the start of a new game
         private void Reset() {
             SpriteFont font = _player.GetFont();
@@ -130,6 +139,30 @@ namespace OfficeCrawler {
             Window.TextInput += _player.GetTyping;
             _enemies = new List<Enemy>();
         }
+        # endregion
     }
+
+    public class Obstacle {
+        private Texture2D sprite;
+        private Vector2 pos;
+        public Rectangle BoundingBox;
+
+        public Obstacle(Texture2D texture, Vector2 pos) {
+            this.sprite = texture;
+            this.pos = pos;
+            BoundingBox = new Rectangle((int)pos.X, (int)pos.Y, sprite.Width, sprite.Height);
+        }
+
+        public void Draw(SpriteBatch spriteBatch) {
+            spriteBatch.Draw(sprite, pos, null, Color.DarkSlateGray, 0, new Vector2(sprite.Width / 2, sprite.Height / 2), OfficeCrawler.Scale, SpriteEffects.None, 1);
+        }
+
+        public void Update(GameTime gameTime) {
+            
+        }
+    }
+
+
+
 }
 

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Xml.Serialization;
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 
 namespace OfficeCrawler {
@@ -11,7 +12,7 @@ namespace OfficeCrawler {
         private Vector2 position;
         private Color currentColor = Color.IndianRed;
         private Rectangle BoundingBox;
-        private readonly float moveSpeed = 2;
+        private readonly float moveSpeed = 3;
         private bool FacingRight;
 
         //PUBLIC VARIABLES
@@ -41,18 +42,9 @@ namespace OfficeCrawler {
 
         //Updates the enemy
         public void Update(GameTime gameTime, Player player) {
-            if (position.X > player.pos.X) {
-                position.X -= moveSpeed;
-                FacingRight = false;
-            } else if (position.X < player.pos.X) {
-                position.X += moveSpeed;
-                FacingRight = true;
-            }
-            if (position.Y > player.pos.Y) {
-                position.Y -= moveSpeed;
-            } else if (position.Y < player.pos.Y) {
-                position.Y += moveSpeed;
-            }
+            //enemy movement 
+            position += Vector2.Normalize(player.pos - this.position) * moveSpeed;
+            //Defining a player box
             BoundingBox.X = (int)position.X - sprite.Width * OfficeCrawler.Scale / 2;
             BoundingBox.Y = (int)position.Y - sprite.Width * OfficeCrawler.Scale / 2;
             if (player.insult != null) {

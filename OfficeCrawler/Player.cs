@@ -7,6 +7,7 @@ using Vector2 = Microsoft.Xna.Framework.Vector2;
 namespace OfficeCrawler {
     class Player {
 
+        #region Private Variables
         //PRIVATE VARIABLES
         private Texture2D sprite;
         private readonly float moveSpeed = 10;
@@ -16,7 +17,10 @@ namespace OfficeCrawler {
         private float invincibleTime = -1f;
         private int scoreInt;
         private bool FacingRight;
+        private Obstacle[] obstacles = new Obstacle[1];
+        #endregion
 
+        #region Public Variables
         //PUBLIC VARIABLES
         public Vector2 pos;
         public bool moving;
@@ -27,7 +31,9 @@ namespace OfficeCrawler {
         public Rectangle BoundingBox;
         public int health;
         public bool Alive { get; set; }
+        #endregion
 
+        #region Initialization
         //CONSTRUCTOR
         public Player(Texture2D sprite, Vector2 pos) {
             this.sprite = sprite;
@@ -40,12 +46,14 @@ namespace OfficeCrawler {
             correctInsults[0] = new InsultString("no u", 1f, 6);
             correctInsults[1] = new InsultString("your stupid lol", 5f, 6);
             correctInsults[2] = new InsultString("your mom you're dad", 10f, 15);
+            
         }
 
         //Sets the texture of the player
         public void SetTexture(Texture2D newTex) {
             this.sprite = newTex;
             BoundingBox = new Rectangle((int)pos.X - sprite.Width * OfficeCrawler.Scale / 2, (int)pos.Y - sprite.Width * OfficeCrawler.Scale / 2, sprite.Width * OfficeCrawler.Scale, sprite.Height * OfficeCrawler.Scale);
+            obstacles[0] = new Obstacle(sprite, new Vector2(GameWidth / 2, GameHeight / 2));
         }
 
         //Returns the texture of the player
@@ -60,9 +68,14 @@ namespace OfficeCrawler {
         public SpriteFont GetFont() {
             return insultFont;
         }
+        #endregion
 
+        #region Update and Draw
         //Drawing player, enemies, health bar, current insult, available insults, and score every frame
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch) {
+            foreach(Obstacle ob in obstacles) {
+                ob.Draw(spriteBatch);
+            }
             Vector2 insultSize = insultFont.MeasureString(currentInsult);
             if (invincibleTime > 0) {
                 spriteBatch.Draw(sprite, pos, null, Color.Red, 0, new Vector2(sprite.Width / 2, sprite.Height / 2), OfficeCrawler.Scale, (FacingRight) ? SpriteEffects.None : SpriteEffects.FlipHorizontally, 1);
@@ -103,20 +116,14 @@ namespace OfficeCrawler {
             spriteBatch.DrawString(insultFont, score, new Vector2(GameWidth / 2 - scoreSize.X / 2, 0), Color.Black);
         }
 
-        //Check if the insult typed is a valid insult
-        private bool InsultIsCorrect() {
-            foreach(InsultString insult in correctInsults) {
-                if (currentInsult == insult.Name)
-                    return true;
-            }
-            return false;
-        }
-
         //Called every frame. Gets keyboard input, sets player bounding box, updates insult, and invincibility frames
         public void Update(GameTime gameTime) {
             GetKeyBoardInput(gameTime);
             BoundingBox.X = (int)pos.X - sprite.Width * OfficeCrawler.Scale / 2;
             BoundingBox.Y = (int)pos.Y - sprite.Width * OfficeCrawler.Scale / 2;
+            foreach(Obstacle ob in obstacles) { 
+            
+            }
             if (insult != null)
                 insult.Update(this);
             if (health <= 0)
@@ -135,6 +142,8 @@ namespace OfficeCrawler {
         private void GetKeyBoardInput(GameTime gameTime) {
             KeyboardState keyState = Keyboard.GetState();
             if (moving) {
+
+
                 if (keyState.IsKeyDown(Keys.E) && BoundingBox.Y-1 > 0) {
                     pos.Y -= moveSpeed;
                 }
@@ -218,6 +227,17 @@ namespace OfficeCrawler {
                 
             }
         }
+        #endregion
+
+        #region Misc
+        //Check if the insult typed is a valid insult
+        private bool InsultIsCorrect() {
+            foreach (InsultString insult in correctInsults) {
+                if (currentInsult == insult.Name)
+                    return true;
+            }
+            return false;
+        }
 
         //If the player does not have IFrames then take damage
         public void TakeDamage() {
@@ -240,8 +260,10 @@ namespace OfficeCrawler {
         public void Score() {
             this.scoreInt++;
         }
+        #endregion
     }
 
+    #region InsultString
     //STRUCTURE OF THE INSULT STRING
     struct InsultString {
 
@@ -257,7 +279,9 @@ namespace OfficeCrawler {
             Speed = speed;
         }
     }
+    #endregion
 
+    #region Insult Class
     //INSULT CLASS
     class Insult {
         //PRIVATE VARIABLES 
@@ -299,4 +323,5 @@ namespace OfficeCrawler {
             spriteBatch.Draw(texture, position, Color.White);
         }
     }
+    #endregion
 }
