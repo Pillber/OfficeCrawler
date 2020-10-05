@@ -23,12 +23,18 @@ using System.Collections.Generic;
 namespace OfficeCrawler {
     public class OfficeCrawler : Game {
 
+        //PRIVATE VARIABLES
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         private Player _player;
         private static Random Rand = new Random();
+        private List<Enemy> _enemies = new List<Enemy>();
+        private float _respawnSpeed = 3f;
+
+        //PUBLIC VARIABLES
         public const int Scale = 3;
 
+        //CONSTRUCTOR
         public OfficeCrawler() {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
@@ -37,6 +43,7 @@ namespace OfficeCrawler {
             _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
         }
 
+        //Start the game
         protected override void Initialize() {
             // TODO: Add your initialization logic here
             _player = new Player(null, Vector2.Zero);
@@ -49,6 +56,7 @@ namespace OfficeCrawler {
             Window.AllowAltF4 = true;
         }
 
+        //Load any sprites or textures
         protected override void LoadContent() {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
@@ -58,8 +66,7 @@ namespace OfficeCrawler {
             _player.AddFont(Content.Load<SpriteFont>("insult"));
         }
 
-        private List<Enemy> _enemies = new List<Enemy>();
-        private float _respawnSpeed = 3f;
+        //GAME LOOP
         protected override void Update(GameTime gameTime) {
             if (!_player.Alive) {
                 if (Keyboard.GetState().IsKeyDown(Keys.Space)) {
@@ -86,6 +93,7 @@ namespace OfficeCrawler {
             base.Update(gameTime);
         }
 
+        //Render the sprites or textures
         protected override void Draw(GameTime gameTime) {
             if(_player.Alive) {
                 if (_player.moving)
@@ -111,6 +119,7 @@ namespace OfficeCrawler {
             base.Draw(gameTime);
         }
 
+        //Resets the game after it has been played once
         private void Reset() {
             SpriteFont font = _player.GetFont();
             Texture2D texture = _player.GetTexture();

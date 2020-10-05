@@ -7,27 +7,28 @@ using Vector2 = Microsoft.Xna.Framework.Vector2;
 namespace OfficeCrawler {
     class Player {
 
+        //PRIVATE VARIABLES
         private Texture2D sprite;
-        public Vector2 pos;
         private readonly float moveSpeed = 5;
-        public bool moving;
-        public string currentInsult;
         private SpriteFont insultFont;
         private KeyboardState previousKeyState;
-        public Insult insult;
         private readonly InsultString[] correctInsults = new InsultString[3];
-        public int GameWidth { get;  set; }
-        public int GameHeight { get; set; }
-        public Rectangle BoundingBox;
-        public int health;
-        public bool Alive { get; set; }
         private float invincibleTime = -1f;
         private int scoreInt;
         private bool FacingRight;
 
+        //PUBLIC VAIRABLES
+        public Vector2 pos;
+        public bool moving;
+        public string currentInsult;
+        public Insult insult;
+        public int GameWidth { get; set; }
+        public int GameHeight { get; set; }
+        public Rectangle BoundingBox;
+        public int health;
+        public bool Alive { get; set; }
 
-
-
+        //CONSTRUCTOR
         public Player(Texture2D sprite, Vector2 pos) {
             this.sprite = sprite;
             this.pos = pos;
@@ -41,23 +42,28 @@ namespace OfficeCrawler {
             correctInsults[2] = new InsultString("your mom you're dad", 10f, 15);
         }
 
+        //Sets the texture of the player
         public void SetTexture(Texture2D newTex) {
             this.sprite = newTex;
             BoundingBox = new Rectangle((int)pos.X - sprite.Width * OfficeCrawler.Scale / 2, (int)pos.Y - sprite.Width * OfficeCrawler.Scale / 2, sprite.Width * OfficeCrawler.Scale, sprite.Height * OfficeCrawler.Scale);
         }
 
+        //Returns the texture of the player
         public Texture2D GetTexture() {
             return sprite;
         }
 
+        //Adds a font to the insult
         public void AddFont(SpriteFont font) {
             this.insultFont = font;
         }
 
+        //Returns the font of the insult
         public SpriteFont GetFont() {
             return insultFont;
         }
 
+        //Displays everything on the screen for the player
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch) {
             Vector2 insultSize = insultFont.MeasureString(currentInsult);
             if (invincibleTime > 0) {
@@ -88,6 +94,7 @@ namespace OfficeCrawler {
             spriteBatch.DrawString(insultFont, score, new Vector2(GameWidth / 2 - scoreSize.X / 2, 0), Color.Black);
         }
 
+        //Check if the insult typed is a valid insult
         private bool InsultIsCorrect() {
             foreach(InsultString insult in correctInsults) {
                 if (currentInsult == insult.Name)
@@ -96,6 +103,7 @@ namespace OfficeCrawler {
             return false;
         }
 
+        //Updates the player 
         public void Update(GameTime gameTime) {
             GetKeyBoardInput(gameTime);
             BoundingBox.X = (int)pos.X - sprite.Width * OfficeCrawler.Scale / 2;
@@ -114,6 +122,7 @@ namespace OfficeCrawler {
             }
         }
 
+        //Gets keyboard input for the typed insult
         private void GetKeyBoardInput(GameTime gameTime) {
             KeyboardState keyState = Keyboard.GetState();
             if (moving) {
@@ -178,6 +187,7 @@ namespace OfficeCrawler {
             previousKeyState = keyState;
         }
 
+        //Gets the keys being pressed
         public void GetTyping(object sender, TextInputEventArgs e) {
             if(!moving) {
                 char c = e.Character;
@@ -200,6 +210,7 @@ namespace OfficeCrawler {
             }
         }
 
+        //Allows player to take damage
         public void TakeDamage() {
             if(invincibleTime == -1f) {
                 invincibleTime = 1f;
@@ -208,6 +219,7 @@ namespace OfficeCrawler {
 
         }
 
+        //Asks the user if they want to reset
         public void PromptReset(SpriteBatch spriteBatch) {
             string message = "Press Space to restart";
             Vector2 stringSize = insultFont.MeasureString(message);
@@ -215,17 +227,21 @@ namespace OfficeCrawler {
 
         }
 
+        //Increases the score by one
         public void Score() {
             this.scoreInt++;
         }
     }
 
+    //STRUCTURE OF INSULT STRING
     struct InsultString {
 
+        //PUBLIC VARIABLES
         public string Name;
         public float Damage;
         public int Speed;
 
+        //CONSTRUCTOR
         public InsultString(string name, float damage, int speed) {
             Name = name;
             Damage = damage;
@@ -233,14 +249,20 @@ namespace OfficeCrawler {
         }
     }
 
+    //CLASS OF THE INSULT
     class Insult {
-        public Vector2 position;
+
+        //PRIVATE VARIABLES
         private Texture2D texture;
         private float speed;
         private float xMovement;
         private float yMovement;
+
+        //PUBLIC VARIABLES
+        public Vector2 position;
         public Rectangle BoundingBox;
 
+        //CONSTRUCTOR
         public Insult(Vector2 position, Texture2D texture, float speed, float xMovement, float yMovement) {
             this.position = position;
             this.speed = speed;
@@ -250,7 +272,7 @@ namespace OfficeCrawler {
             BoundingBox = new Rectangle((int) position.X, (int) position.Y, texture.Width, texture.Height);
         }
 
-
+        //Updates the insult
         public void Update(Player player) {
             BoundingBox.X = (int) position.X;
             BoundingBox.Y = (int) position.Y;
@@ -262,6 +284,7 @@ namespace OfficeCrawler {
             position.Y -= yMovement * speed;
         }
 
+        //Draws the insult on the screen
         public void Draw(SpriteBatch spriteBatch) {
             spriteBatch.Draw(texture, position, Color.White);
         }

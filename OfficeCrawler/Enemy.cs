@@ -6,16 +6,19 @@ namespace OfficeCrawler {
     class Enemy {
         //add childs classes for each different type of enemy
 
+        //PRIVATE VARIABLES
         private Texture2D sprite;
         private Vector2 position;
         private Color currentColor = Color.IndianRed;
         private Rectangle BoundingBox;
         private readonly float moveSpeed = 2;
-        public int DamageRecieved { get; set; }
-        public bool Alive { get; set; }
         private bool FacingRight;
 
+        //PUBLIC VARIABLES
+        public int DamageRecieved { get; set; }
+        public bool Alive { get; set; }
 
+        //CONSTRUCTOR
         public Enemy(Texture2D sprite, Vector2 position) {
             this.sprite = sprite;
             this.position = position;
@@ -24,6 +27,7 @@ namespace OfficeCrawler {
             Alive = true;
 
         }
+        //Updates the enemy
         public void Update(GameTime gameTime, Player player) {
             if (position.X > player.pos.X) {
                 position.X -= moveSpeed;
@@ -56,6 +60,7 @@ namespace OfficeCrawler {
             }
         }
 
+        //Draws the enemy on the screen
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch) {
             spriteBatch.Draw(sprite, position, null, currentColor, 0, new Vector2(sprite.Width / 2, sprite.Height / 2), OfficeCrawler.Scale, (FacingRight) ? SpriteEffects.None : SpriteEffects.FlipHorizontally, 1);
         }
