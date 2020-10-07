@@ -150,11 +150,11 @@ namespace OfficeCrawler {
         public Obstacle(Texture2D texture, Vector2 pos) {
             this.sprite = texture;
             this.pos = pos;
-            BoundingBox = new Rectangle((int)pos.X, (int)pos.Y, sprite.Width, sprite.Height);
+            BoundingBox = new Rectangle((int)pos.X, (int)pos.Y, sprite.Width * OfficeCrawler.Scale, sprite.Height * OfficeCrawler.Scale);
         }
 
         public void Draw(SpriteBatch spriteBatch) {
-            spriteBatch.Draw(sprite, pos, null, Color.DarkSlateGray, 0, new Vector2(sprite.Width / 2, sprite.Height / 2), OfficeCrawler.Scale, SpriteEffects.None, 1);
+            spriteBatch.Draw(sprite, pos, null, Color.DarkSlateGray, 0, Vector2.Zero, OfficeCrawler.Scale, SpriteEffects.None, 1);
         }
 
         public void Update(GameTime gameTime) {

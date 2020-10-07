@@ -53,7 +53,7 @@ namespace OfficeCrawler {
         public void SetTexture(Texture2D newTex) {
             this.sprite = newTex;
             BoundingBox = new Rectangle((int)pos.X - sprite.Width * OfficeCrawler.Scale / 2, (int)pos.Y - sprite.Width * OfficeCrawler.Scale / 2, sprite.Width * OfficeCrawler.Scale, sprite.Height * OfficeCrawler.Scale);
-            obstacles[0] = new Obstacle(sprite, new Vector2(GameWidth / 2, GameHeight / 2));
+            //obstacles[0] = new Obstacle(sprite, new Vector2(200, 200));
         }
 
         //Returns the texture of the player
@@ -73,8 +73,10 @@ namespace OfficeCrawler {
         #region Update and Draw
         //Drawing player, enemies, health bar, current insult, available insults, and score every frame
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch) {
-            foreach(Obstacle ob in obstacles) {
-                ob.Draw(spriteBatch);
+            foreach (Obstacle ob in obstacles) {
+                if (ob != null) {
+                    ob.Draw(spriteBatch);
+                }
             }
             Vector2 insultSize = insultFont.MeasureString(currentInsult);
             if (invincibleTime > 0) {
@@ -121,9 +123,31 @@ namespace OfficeCrawler {
             GetKeyBoardInput(gameTime);
             BoundingBox.X = (int)pos.X - sprite.Width * OfficeCrawler.Scale / 2;
             BoundingBox.Y = (int)pos.Y - sprite.Width * OfficeCrawler.Scale / 2;
+            /*
             foreach(Obstacle ob in obstacles) { 
-            
+                //if the right side of the player is in the left side of the box regardless of y pos
+                if(BoundingBox.X + BoundingBox.Width > ob.BoundingBox.X) {
+                    if(!((BoundingBox.Y < ob.BoundingBox.Y + ob.BoundingBox.Height && BoundingBox.Y + BoundingBox.Height > ob.BoundingBox.Y + ob.BoundingBox.Height) || 
+                        (BoundingBox.Y + BoundingBox.Height > ob.BoundingBox.Y && BoundingBox.Y > ob.BoundingBox.Y))) {
+                       
+                    } else {
+                        pos.X = ob.BoundingBox.X - BoundingBox.Width;
+                    }
+                    
+                }
+                else if(BoundingBox.X < ob.BoundingBox.X + ob.BoundingBox.Width) {
+                    if (BoundingBox.Y < ob.BoundingBox.Y + ob.BoundingBox.Height) {
+
+                    } else if (BoundingBox.Y + BoundingBox.Height > ob.BoundingBox.Y) {
+
+                    } else {
+                        pos.X = ob.BoundingBox.X + ob.BoundingBox.Width;
+                    }
+                    
+                }
+                
             }
+            */
             if (insult != null)
                 insult.Update(this);
             if (health <= 0)
