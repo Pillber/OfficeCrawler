@@ -5,17 +5,15 @@ using System;
 using System.Collections.Generic;
 
 /*TODO
- *
- * Multiple Insult Support
- *  - Greyed out autocomplete of the closet insult to the one typed (KInda done)
+ * 
+ * Obstacles in the play area
+ * 
  * reading and writing files
  *  -storing insults/ map data
  * advanced collision detection / tilemap
  * art
- * better AI
- *  -pathfinding
  * screen scrolling
- * input delay when switching modes (accidently appending movement keys)
+ * Game states (game over, pausing, playing)
  * 
  */
 
@@ -23,12 +21,23 @@ using System.Collections.Generic;
 namespace OfficeCrawler {
     public class OfficeCrawler : Game {
 
+        # region Private Variables
+        //PRIVATE VARIABLES
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         private Player _player;
         private static Random Rand = new Random();
-        public const int Scale = 3;
+        private List<Enemy> _enemies = new List<Enemy>();
+        private float _respawnSpeed = 5f;
+        #endregion
 
+        #region Public Variables
+        //PUBLIC VARIABLES
+        public const int Scale = 4;
+        #endregion
+
+        #region Initialization
+        //CONSTRUCTOR
         public OfficeCrawler() {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
@@ -37,6 +46,7 @@ namespace OfficeCrawler {
             _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
         }
 
+        //Sets up window
         protected override void Initialize() {
             // TODO: Add your initialization logic here
             _player = new Player(null, Vector2.Zero);
@@ -49,6 +59,7 @@ namespace OfficeCrawler {
             Window.AllowAltF4 = true;
         }
 
+        //Creates spritebatch, loads player sprite and insult font
         protected override void LoadContent() {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
@@ -57,9 +68,10 @@ namespace OfficeCrawler {
             _player.SetTexture(playerTex);
             _player.AddFont(Content.Load<SpriteFont>("insult"));
         }
+        #endregion
 
-        private List<Enemy> _enemies = new List<Enemy>();
-        private float _respawnSpeed = 3f;
+        #region Update And Draw
+        //Called every frame, updates player and enemy spawn
         protected override void Update(GameTime gameTime) {
             if (!_player.Alive) {
                 if (Keyboard.GetState().IsKeyDown(Keys.Space)) {
@@ -70,7 +82,7 @@ namespace OfficeCrawler {
             _respawnSpeed -= elapsedTime;
             if(_respawnSpeed <= 0) {
                 _enemies.Add(new Enemy(_player.GetTexture(), new Vector2(Rand.Next(0, _graphics.PreferredBackBufferWidth), Rand.Next(0, _graphics.PreferredBackBufferHeight))));
-                _respawnSpeed = 3f;
+                _respawnSpeed = 5f;
             }
                
             if(_enemies.Count > 0) {
@@ -86,6 +98,7 @@ namespace OfficeCrawler {
             base.Update(gameTime);
         }
 
+        //Called in update (every frame), draws play
         protected override void Draw(GameTime gameTime) {
             if(_player.Alive) {
                 if (_player.moving)
@@ -110,7 +123,10 @@ namespace OfficeCrawler {
             
             base.Draw(gameTime);
         }
+        #endregion
 
+        #region Reset
+        //Resets all the values to the start of a new game
         private void Reset() {
             SpriteFont font = _player.GetFont();
             Texture2D texture = _player.GetTexture();
@@ -123,6 +139,30 @@ namespace OfficeCrawler {
             Window.TextInput += _player.GetTyping;
             _enemies = new List<Enemy>();
         }
+        # endregion
     }
+
+    public class Obstacle {
+        private Texture2D sprite;
+        private Vector2 pos;
+        public Rectangle BoundingBox;
+
+        public Obstacle(Texture2D texture, Vector2 pos) {
+            this.sprite = texture;
+            this.pos = pos;
+            BoundingBox = new Rectangle((int)pos.X, (int)pos.Y, sprite.Width * OfficeCrawler.Scale, sprite.Height * OfficeCrawler.Scale);
+        }
+
+        public void Draw(SpriteBatch spriteBatch) {
+            spriteBatch.Draw(sprite, pos, null, Color.DarkSlateGray, 0, Vector2.Zero, OfficeCrawler.Scale, SpriteEffects.None, 1);
+        }
+
+        public void Update(GameTime gameTime) {
+            
+        }
+    }
+
+
+
 }
 
