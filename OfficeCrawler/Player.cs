@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Linq;
 using Vector2 = Microsoft.Xna.Framework.Vector2;
+using System.Diagnostics;
 
 namespace OfficeCrawler {
     class Player {
@@ -53,7 +54,7 @@ namespace OfficeCrawler {
         public void SetTexture(Texture2D newTex) {
             this.sprite = newTex;
             BoundingBox = new Rectangle((int)pos.X - sprite.Width * OfficeCrawler.Scale / 2, (int)pos.Y - sprite.Width * OfficeCrawler.Scale / 2, sprite.Width * OfficeCrawler.Scale, sprite.Height * OfficeCrawler.Scale);
-            //obstacles[0] = new Obstacle(sprite, new Vector2(200, 200));
+            obstacles[0] = new Obstacle(sprite, new Vector2(200, 200));
         }
 
         //Returns the texture of the player
@@ -69,6 +70,7 @@ namespace OfficeCrawler {
             return insultFont;
         }
         #endregion
+
 
         #region Update and Draw
         //Drawing player, enemies, health bar, current insult, available insults, and score every frame
@@ -123,6 +125,9 @@ namespace OfficeCrawler {
             GetKeyBoardInput(gameTime);
             BoundingBox.X = (int)pos.X - sprite.Width * OfficeCrawler.Scale / 2;
             BoundingBox.Y = (int)pos.Y - sprite.Width * OfficeCrawler.Scale / 2;
+
+
+
             /*
             foreach(Obstacle ob in obstacles) { 
                 //if the right side of the player is in the left side of the box regardless of y pos
@@ -167,9 +172,25 @@ namespace OfficeCrawler {
             KeyboardState keyState = Keyboard.GetState();
             if (moving) {
 
+                /*  After receaving player movement input - Checks if they would move outside screen
+                 *      Check if future position of player is clipping with obstacle
+                 *      if yes - only move player the distance between the player and the obstcale
+                 *      if not - move the player the full movement speed
+                 * 
+                 * 
+                 */
 
                 if (keyState.IsKeyDown(Keys.E) && BoundingBox.Y-1 > 0) {
-                    pos.Y -= moveSpeed;
+                    foreach (Obstacle ob in obstacles) {
+                        if ((pos.Y - moveSpeed < ob.BoundingBox.Y + ob.BoundingBox.Height && pos.Y - moveSpeed - sprite.Height < ob.BoundingBox.Y) && (pos.X < ob.BoundingBox.X + ob.BoundingBox.Width && pos.X > ob.BoundingBox.X)) {
+                            Debug.WriteLine("Reached E");
+                            pos.Y += ob.BoundingBox.Y - pos.Y;
+                        }
+                        else {
+                            pos.Y -= moveSpeed;
+                        }
+                    }
+                        
                 }
                 if (keyState.IsKeyDown(Keys.S) && BoundingBox.X-1 > 0) {
                     pos.X -= moveSpeed;
@@ -179,8 +200,19 @@ namespace OfficeCrawler {
                     pos.Y += moveSpeed;
                 }
                 if (keyState.IsKeyDown(Keys.F) && BoundingBox.X+1+(sprite.Height * OfficeCrawler.Scale) < GameWidth) {
-                    pos.X += moveSpeed;
-                    FacingRight = true;
+                    /*
+                     * if pos.X+movespeed is in an obstacle --> pos.X += obstacle.X - pos.X
+                     * if not --> move normally
+                     */
+                    foreach(Obstacle ob in obstacles) {
+                        float futurePos = pos.X + moveSpeed;
+                        if((futurePos + (OfficeCrawler.Scale * sprite.Width/2.0) > ob.BoundingBox.X && futurePos - (OfficeCrawler.Scale * sprite.Width / 2.0) < ob.BoundingBox.X + ob.BoundingBox.Width) && (pos.Y - (OfficeCrawler.Scale * sprite.Height/2.0) < ob.BoundingBox.Y + ob.BoundingBox.Height && pos.Y + (OfficeCrawler.Scale * sprite.Height/2.0) > ob.BoundingBox.Y)) {
+                            pos.X += ob.BoundingBox.X - pos.X;
+                        } else {
+                            pos.X += moveSpeed;
+                            FacingRight = true;
+                        }
+                    }
                 }
                 if (insult == null && InsultIsCorrect()) {
                     int speed = 5;
