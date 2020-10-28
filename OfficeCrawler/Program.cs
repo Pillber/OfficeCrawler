@@ -10,8 +10,9 @@ namespace OfficeCrawler {
 
         //[STAThread]
         static void Main() {
-            //using (var game = new OfficeCrawler())
-            //game.Run();
+            using (var game = new OfficeCrawler())
+                game.Run();
+            /*
             Word[] words = new Word[7];
             words[0] = new Word("you're", PartOfSpeech.Pronoun);
             words[1] = new Word("momma", PartOfSpeech.Noun);
@@ -57,10 +58,12 @@ namespace OfficeCrawler {
                 }
                 Console.WriteLine();
             }
+            */
         }
-
+            /*
         static void RankInsult(List<Word> currentInsult) {
             Console.WriteLine("No synergy detected");
         }
+            */
     }
 }
