@@ -8,7 +8,7 @@ using System.Runtime.CompilerServices;
 namespace OfficeCrawler {
     public static class Program {
 
-        //[STAThread]
+        [STAThread]
         static void Main() {
             using (var game = new OfficeCrawler())
                 game.Run();

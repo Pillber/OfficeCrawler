@@ -7,7 +7,6 @@ namespace OfficeCrawler {
 
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
-        private Entity _player;
 
         public OfficeCrawler() {
             _graphics = new GraphicsDeviceManager(this);
@@ -18,7 +17,6 @@ namespace OfficeCrawler {
 
         protected override void Initialize() {
             // TODO: Add your initialization logic here
-            _player = new Entity(this);
             base.Initialize();
         }
 
@@ -32,7 +30,6 @@ namespace OfficeCrawler {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
             // TODO: Add your update logic here
-            _player.Update(gameTime);
             base.Update(gameTime);
         }
 
@@ -40,7 +37,6 @@ namespace OfficeCrawler {
         protected override void Draw(GameTime gameTime) {
             GraphicsDevice.Clear(Color.CornflowerBlue);
             // TODO: Add your drawing logic here
-            _player.Draw(gameTime);
             base.Draw(gameTime);
         }
     }
