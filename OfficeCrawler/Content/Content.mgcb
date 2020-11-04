@@ -25,3 +25,9 @@
 /processorParam:TextureFormat=Color
 /build:office_crawler_player.png
 
+#begin OfficeCrawlerMusic.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:OfficeCrawlerMusic.mp3
+

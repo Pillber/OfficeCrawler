@@ -7,7 +7,7 @@ namespace OfficeCrawler {
 
     interface IEntity {
         void Update(GameTime gameTime);
-        void Draw(SpriteBatch spriteBatch, GameTime gameTime);
+        void Draw(GameTime gameTime);
     }
 
     public class BaseEntity : IEntity {
@@ -52,9 +52,8 @@ namespace OfficeCrawler {
 
         #region Drawing And Updating
         // Draws entity using sprite renderer and gametime
-        public virtual void Draw(SpriteBatch spriteBatch, GameTime gameTime) {
-            if(_spriteRenderer.Sprite.Texture != null)
-                _spriteRenderer.Draw(spriteBatch, gameTime);
+        public virtual void Draw(GameTime gameTime) {
+            OfficeCrawler.GraphicsContext.DrawSprite(_spriteRenderer, gameTime);
         }
 
         // Called every frame, updates entity
@@ -69,10 +68,6 @@ namespace OfficeCrawler {
         #region Constructor & Initializing
         public Player() : base() {
 
-        }
-
-        public override void Initialize() {
-            base.Initialize();
         }
         #endregion
 
