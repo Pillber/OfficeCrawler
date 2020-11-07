@@ -10,6 +10,7 @@ namespace OfficeCrawler {
      * Transform Matrix Camera
      *  - Sets moveable area of display, so we can display areas larger than the screen size
      *  - dependent on target resolution.
+     *  - The camera is just a maxtrix transformation that we can use for the screen.
      * 
      * 
      * RenderTarget2D
@@ -29,7 +30,6 @@ namespace OfficeCrawler {
         private SpriteBatch _spriteBatch;
         private GraphicsDeviceManager _graphicsManager;
         private GraphicsDevice _graphicsDevice;
-        public RenderTarget2D _renderTarget2D;
 
         private Texture2D _pixelRectangle;
 
@@ -48,7 +48,6 @@ namespace OfficeCrawler {
             get => _graphicsDevice;
             set {
                 _graphicsDevice = value;
-                _renderTarget2D = new RenderTarget2D(GraphicsDevice, VirtualWidth, VirtualHeight);
             }
         }
 
@@ -56,15 +55,13 @@ namespace OfficeCrawler {
             _graphicsManager = graphicsManager;
         }
 
-        public void Begin() {
-            _graphicsDevice.SetRenderTarget(_renderTarget2D);
+        public void Begin(Matrix matrix) {
             _graphicsDevice.Clear(Color.CornflowerBlue);
-            _spriteBatch.Begin();
+            _spriteBatch.Begin(samplerState: SamplerState.PointClamp, transformMatrix: matrix);
         }
 
         public void End() {
             _spriteBatch.End();
-            _graphicsDevice.SetRenderTarget(null);
         }
 
         public void DrawRect(Vector2 position, int width, int height, Color color) {
