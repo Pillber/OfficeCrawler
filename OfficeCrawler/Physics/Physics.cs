@@ -1,6 +1,4 @@
-﻿
-
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 
 namespace OfficeCrawler {
 
@@ -31,32 +29,18 @@ namespace OfficeCrawler {
         }
 
         public void ClampPosition() {
-            //NEED to add bounding box width and height adjustments!!!!!!
+            //NEED to add player bounding box width and height adjustments!!!!!!
 
             //Screen edge X collision
             Transform.X = (Transform.X < 0) ? 0 : Transform.X;
-            Transform.X = (Transform.X > 600) ? 600 : Transform.X;
+            Transform.X = (Transform.X > GraphicsContext.VirtualWidth) ? GraphicsContext.VirtualWidth: Transform.X;
 
             //Screen edge y collision
             Transform.Y = (Transform.Y < 0) ? 0 : Transform.Y;
-            Transform.Y = (Transform.Y > 400) ? 400 : Transform.Y;
+            Transform.Y = (Transform.Y > GraphicsContext.VirtualHeight) ? GraphicsContext.VirtualHeight : Transform.Y;
         }
 
 
-    }
-
-    /*
-     * 
-     * Move methods that move the entity
-     * 
-     */
-
-
-    public class Collider {
-        /*
-         * 
-         * 
-         */
     }
 }
 

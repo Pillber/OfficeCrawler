@@ -55,9 +55,9 @@ namespace OfficeCrawler {
             _graphicsManager = graphicsManager;
         }
 
-        public void Begin(Matrix matrix) {
+        public void Begin() {
             _graphicsDevice.Clear(Color.CornflowerBlue);
-            _spriteBatch.Begin(samplerState: SamplerState.PointClamp, transformMatrix: matrix);
+            _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
         }
 
         public void End() {

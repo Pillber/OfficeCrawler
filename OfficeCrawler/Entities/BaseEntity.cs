@@ -1,15 +1,7 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 
 namespace OfficeCrawler {
-
-    interface IEntity {
-        void Update(GameTime gameTime);
-        void Draw(GameTime gameTime);
-    }
-
     public class BaseEntity : IEntity {
 
         #region Private Variables
@@ -37,7 +29,7 @@ namespace OfficeCrawler {
         #endregion
 
         #region Constructor & Initializing
-        public BaseEntity() {}
+        public BaseEntity() { }
 
         public virtual void Initialize() {
             _transform = new Transform();
@@ -62,45 +54,4 @@ namespace OfficeCrawler {
         }
         #endregion
     }
-
-    public class Player : BaseEntity {
-
-        #region Constructor & Initializing
-        public Player() : base() {
-
-        }
-        #endregion
-
-        #region Override Update & Physics
-        public override void Update(GameTime gameTime) {
-
-            //Uses keyboard state and Physics move methods to move player
-            KeyboardState keyState = Keyboard.GetState();
-            if(keyState.IsKeyDown(Keys.W)) {
-                Physics.MoveY(-5);
-            }
-            if (keyState.IsKeyDown(Keys.D)) {
-                Physics.MoveX(5);
-            }
-            if (keyState.IsKeyDown(Keys.A)) {
-                Physics.MoveX(-5);
-            }
-            if(keyState.IsKeyDown(Keys.S)) {
-                Physics.MoveY(5);
-            }
-
-            Physics.ClampPosition();
-
-            // Update Input
-            // Update Physics
-            // Update Position
-            // Misc Updates
-
-
-            base.Update(gameTime);
-        }
-        #endregion
-    }
-
-
 }

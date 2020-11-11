@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using System;
 
 namespace OfficeCrawler {
     public class OfficeCrawler : Game {
@@ -10,9 +11,11 @@ namespace OfficeCrawler {
         private SpriteBatch _spriteBatch;
 
         public static GraphicsContext GraphicsContext;
+        public static Random Random = new Random();
 
 
         private Player _player = new Player();
+        private Word _word = new Word();
         private Song _song;
 
         public OfficeCrawler() {
@@ -27,6 +30,7 @@ namespace OfficeCrawler {
             // TODO: Add your initialization logic here
             GraphicsContext.GraphicsDevice = GraphicsDevice;
             _player.Initialize();
+            _word.Initialize();
             base.Initialize();
         }
 
@@ -75,19 +79,9 @@ namespace OfficeCrawler {
         protected override void Draw(GameTime gameTime) {
             GraphicsDevice.Clear(Color.CornflowerBlue);
             // TODO: Add your drawing logic here
-            var viewportCenter = new Vector2(GraphicsContext.GraphicsDevice.Viewport.Width / 2, GraphicsContext.GraphicsDevice.Viewport.Height / 2);
-            var matrix = Matrix.CreateTranslation(-cameraPosition.X, -cameraPosition.Y, 0) *
-                Matrix.CreateRotationZ(0) *
-                Matrix.CreateScale(zoom, zoom, 0); //* 
-
-                //This line would center the camera around the player's origin (0, 0)
-                //Matrix.CreateTranslation(new Vector3(viewportCenter, 0));
-
-
-
-            GraphicsContext.Begin(matrix);
+            GraphicsContext.Begin();
             _player.Draw(gameTime);
-            GraphicsContext.DrawRect(new Vector2(100, 100), 10, 20, Color.Red);
+            _word.Draw(gameTime);
             GraphicsContext.End();
             
             base.Draw(gameTime);
