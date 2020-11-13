@@ -45,7 +45,7 @@ namespace OfficeCrawler {
         #region Drawing And Updating
         // Draws entity using sprite renderer and gametime
         public virtual void Draw(GameTime gameTime) {
-            OfficeCrawler.GraphicsContext.DrawSprite(_spriteRenderer, gameTime);
+            _spriteRenderer.Draw(GlobalGraphics.SpriteBatch, gameTime);
         }
 
         // Called every frame, updates entity

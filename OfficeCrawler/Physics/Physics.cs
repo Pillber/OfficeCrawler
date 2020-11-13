@@ -33,11 +33,11 @@ namespace OfficeCrawler {
 
             //Screen edge X collision
             Transform.X = (Transform.X < 0) ? 0 : Transform.X;
-            Transform.X = (Transform.X > GraphicsContext.VirtualWidth) ? GraphicsContext.VirtualWidth: Transform.X;
+            Transform.X = (Transform.X > GlobalGraphics.VirtualWidth) ? GlobalGraphics.VirtualWidth: Transform.X;
 
             //Screen edge y collision
             Transform.Y = (Transform.Y < 0) ? 0 : Transform.Y;
-            Transform.Y = (Transform.Y > GraphicsContext.VirtualHeight) ? GraphicsContext.VirtualHeight : Transform.Y;
+            Transform.Y = (Transform.Y > GlobalGraphics.VirtualHeight) ? GlobalGraphics.VirtualHeight : Transform.Y;
         }
 
 

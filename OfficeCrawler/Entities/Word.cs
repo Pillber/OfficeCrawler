@@ -10,11 +10,11 @@ namespace OfficeCrawler {
 
         public override void Initialize() {
             base.Initialize();
-            Transform.Position = new Vector2(OfficeCrawler.Random.Next(GraphicsContext.VirtualWidth), OfficeCrawler.Random.Next(GraphicsContext.VirtualHeight));
+            Transform.Position = new Vector2(OfficeCrawler.Random.Next(GlobalGraphics.VirtualWidth), OfficeCrawler.Random.Next(GlobalGraphics.VirtualHeight));
         }
 
         public override void Draw(GameTime gameTime) {
-            OfficeCrawler.GraphicsContext.DrawRect(Transform.Position, 20, 10, Color.Black);
+            _spriteRenderer.DrawRect(GlobalGraphics.SpriteBatch, gameTime, 20, 10);
         }
     }
 

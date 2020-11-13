@@ -34,6 +34,10 @@ namespace OfficeCrawler {
         public void Draw(SpriteBatch spriteBatch, GameTime gameTime) {
             spriteBatch.Draw(_sprite.Texture, _transform.Position, null, _sprite.Tint, _transform.Rotation, Vector2.Zero, _transform.Scale, _sprite.Effects, _sprite.LayerDepth);
         }
+
+        public void DrawRect(SpriteBatch spriteBatch, GameTime gameTime, int width, int height) {
+            spriteBatch.Draw(GlobalGraphics.PixelRectangle, new Rectangle((int)_transform.X, (int)_transform.Y, width, height), _sprite.Tint);
+        }
         #endregion
 
         #region Constructor
