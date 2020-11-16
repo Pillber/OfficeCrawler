@@ -12,21 +12,22 @@ namespace OfficeCrawler {
         #endregion
 
         #region Override Update & Physics
+        // Overrides the normal update method for entities
         public override void Update(GameTime gameTime) {
 
             //Uses keyboard state and Physics move methods to move player
             KeyboardState keyState = Keyboard.GetState();
             if (keyState.IsKeyDown(Keys.W)) {
-                Physics.MoveY(-5);
+                Physics.MoveY(-1);
             }
             if (keyState.IsKeyDown(Keys.D)) {
-                Physics.MoveX(5);
+                Physics.MoveX(1);
             }
             if (keyState.IsKeyDown(Keys.A)) {
-                Physics.MoveX(-5);
+                Physics.MoveX(-1);
             }
             if (keyState.IsKeyDown(Keys.S)) {
-                Physics.MoveY(5);
+                Physics.MoveY(1);
             }
             // Update Input
             // Update Physics

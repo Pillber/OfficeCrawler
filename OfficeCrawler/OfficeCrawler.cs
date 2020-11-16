@@ -14,6 +14,7 @@ namespace OfficeCrawler {
 
 
         private Player _player = new Player();
+        private Camera _camera = new Camera(Vector2.Zero);
         private Word _word = new Word();
         private Song _song;
 
@@ -48,6 +49,7 @@ namespace OfficeCrawler {
                 Exit();
             // TODO: Add your update logic here
             _player.Update(gameTime);
+            _camera.Update();
             base.Update(gameTime);
         }
 
@@ -55,9 +57,12 @@ namespace OfficeCrawler {
         protected override void Draw(GameTime gameTime) {
             GraphicsDevice.Clear(Color.CornflowerBlue);
             // TODO: Add your drawing logic here
-            GlobalGraphics.Begin();
+            GlobalGraphics.BeginArea(_camera.TransformationMatrix);
             _player.Draw(gameTime);
             _word.Draw(gameTime);
+            GlobalGraphics.End();
+
+            GlobalGraphics.BeginBackbuffer();
             GlobalGraphics.End();
             
             base.Draw(gameTime);

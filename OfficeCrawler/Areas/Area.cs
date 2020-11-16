@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace OfficeCrawler.Areas {
+namespace OfficeCrawler {
     public class Area {
 
     }
