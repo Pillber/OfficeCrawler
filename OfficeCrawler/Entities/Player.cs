@@ -36,7 +36,7 @@ namespace OfficeCrawler {
 
             Physics.ClampPosition();
 
-            Debug.WriteLine($"{_transform.X}, {_transform.Y}");
+            //Debug.WriteLine($"{_transform.X}, {_transform.Y}");
             base.Update(gameTime);
         }
         #endregion

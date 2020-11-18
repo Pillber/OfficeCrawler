@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using System;
+using System.Diagnostics;
 
 namespace OfficeCrawler {
     public class OfficeCrawler : Game {
@@ -22,6 +23,10 @@ namespace OfficeCrawler {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
+            Window.AllowUserResizing = true;
+            Window.ClientSizeChanged += WindowSizeChanged;
+            _graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+            _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
         }
 
 
@@ -44,17 +49,31 @@ namespace OfficeCrawler {
             //MediaPlayer.Play(_song);
         }
 
+        private KeyboardState previousKeyState;
+
         protected override void Update(GameTime gameTime) {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
             // TODO: Add your update logic here
             _player.Update(gameTime);
             _camera.Update();
+
+
+            KeyboardState keyState = Keyboard.GetState();
+
+            if(keyState.IsKeyDown(Keys.Space) && !previousKeyState.IsKeyDown(Keys.Space)) {
+                GlobalGraphics.GraphicsManager.IsFullScreen = !GlobalGraphics.GraphicsManager.IsFullScreen;
+                GlobalGraphics.GraphicsManager.ApplyChanges();
+            }
+            previousKeyState = keyState;
             base.Update(gameTime);
         }
 
 
         protected override void Draw(GameTime gameTime) {
+
+            //Debug.WriteLine("Viewport Size, Width: " + GlobalGraphics.GraphicsDevice.Viewport.Width + ", Height: " + GlobalGraphics.GraphicsDevice.Viewport.Height);
+
             GraphicsDevice.Clear(Color.CornflowerBlue);
             // TODO: Add your drawing logic here
             GlobalGraphics.BeginArea(_camera.TransformationMatrix);
@@ -72,6 +91,23 @@ namespace OfficeCrawler {
             GlobalGraphics.UnloadContent();
             base.UnloadContent();
 
+        }
+
+        private void WindowSizeChanged(object sender, EventArgs eventArgs) {
+            if(GlobalGraphics.GraphicsManager != null) {
+                Debug.WriteLine("Backbuffer Width: " + GlobalGraphics.GraphicsManager.PreferredBackBufferWidth + ", Height: " + GlobalGraphics.GraphicsManager.PreferredBackBufferHeight);
+
+                int width = Window.ClientBounds.Width;
+                int height = Window.ClientBounds.Height;
+                GlobalGraphics.ScreenWidth = width;
+                GlobalGraphics.ScreenHeight = height;
+                GlobalGraphics.GraphicsDevice.Viewport = new Viewport() {
+                    X = 0,
+                    Y = 0,
+                    Width = width,
+                    Height = height
+                };
+            }
         }
     }
 }

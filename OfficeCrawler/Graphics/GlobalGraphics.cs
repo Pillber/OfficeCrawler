@@ -1,9 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 
 namespace OfficeCrawler {
 
+
+    // This might change from static implementation to singleton implementation. CAREFUL!
 
     public static class GlobalGraphics {
 
@@ -22,11 +23,12 @@ namespace OfficeCrawler {
         // private reference to the GraphicsDevice
         private static GraphicsDevice _graphicsDevice;
         // private representation of the current width of the backbuffer
-        private static int _screenWidth;
+        public static int _screenWidth;
         // private representation of the current height of the backbuffer
-        private static int _screenHeight;
+        public static int _screenHeight;
         // private reference to a white 1x1 pixel Texture2D
         private static Texture2D _pixelRectangle;
+        // private reference to a rendertarget that the Area will be drawn to
         private static RenderTarget2D _areaRenderTarget;
 
         
@@ -46,10 +48,6 @@ namespace OfficeCrawler {
             get => _graphicsManager;
             set {
                 _graphicsManager = value;
-                _graphicsManager.IsFullScreen = true;
-                _graphicsManager.PreferredBackBufferWidth = VirtualWidth * 6;
-                _graphicsManager.PreferredBackBufferHeight = VirtualHeight * 6;
-                _graphicsManager.ApplyChanges();
             }
         }
 
@@ -59,6 +57,8 @@ namespace OfficeCrawler {
             set {
                 _graphicsDevice = value;
                 _areaRenderTarget = new RenderTarget2D(value, VirtualWidth, VirtualHeight);
+                _screenWidth = value.Viewport.Width;
+                _screenHeight = value.Viewport.Height;
             }
         }
 
@@ -71,6 +71,18 @@ namespace OfficeCrawler {
                 return _pixelRectangle;
             }
         }
+
+        public static int ScreenWidth {
+            get => _screenWidth;
+            set => _screenWidth = value;
+        }
+
+        public static int ScreenHeight {
+            get => _screenHeight;
+            set => _screenHeight = value;
+        }
+
+
         #endregion
 
         #region Methods
@@ -81,13 +93,41 @@ namespace OfficeCrawler {
             _spriteBatch.Begin(samplerState: SamplerState.PointClamp, transformMatrix: transformMatrix);
         }
 
+        private static void SetupFullViewport() {
+            _graphicsDevice.Viewport = new Viewport() {
+                X = 0,
+                Y = 0,
+                Width = _screenWidth,
+                Height = _screenHeight
+            };
+        }
+
+        private static void SetupVirtualViewport() {
+            int scale = MathHelper.Min(_screenWidth / VirtualWidth, _screenHeight / VirtualHeight);
+            // Take remainder of screen real estate, if any, and place the upscaled rendertarget at the new position
+            int startingX = (_screenWidth % (VirtualWidth * scale)) / 2;
+            int startingY = (_screenHeight % (VirtualHeight * scale)) / 2;
+
+            _graphicsDevice.Viewport = new Viewport() {
+                X = startingX,
+                Y = startingY,
+                Width = VirtualWidth * scale,
+                Height = VirtualHeight * scale
+            };
+        }
+
         public static void BeginBackbuffer() {
             // Work with GraphicsDevice.Viewport.Width/Height to do Resolution Independence Math if fullscreen
-            // If not fullscreen, we're f*****
+           
             _graphicsDevice.SetRenderTarget(null);
+            //set viewport to full window
+            SetupFullViewport();
             _graphicsDevice.Clear(Color.Black);
+            //set viewport to virtual viewport
+            SetupVirtualViewport();
+            //draw rendertarget (debug)
             _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
-            _spriteBatch.Draw(_areaRenderTarget, new Rectangle(0, 0, GraphicsManager.PreferredBackBufferWidth, GraphicsManager.PreferredBackBufferHeight), Color.White);
+            _spriteBatch.Draw(_areaRenderTarget, new Rectangle(0, 0, _graphicsDevice.Viewport.Width, _graphicsDevice.Viewport.Height), Color.White);
         }
 
         // Ends the current spritebatch
@@ -102,7 +142,7 @@ namespace OfficeCrawler {
             _pixelRectangle.SetData(new Color[] { Color.White });
         }
 
-        // Deletes the 1x1 pixel Texture2D from video memory
+        // Deletes the 1x1 pixel Texture2D from video memory, as well as the areaRenderTarget
         public static void UnloadContent() {
             if (_pixelRectangle != null)
                 _pixelRectangle.Dispose();
@@ -145,6 +185,20 @@ namespace OfficeCrawler {
                 Width = width,
                 Height = height
             };
+
+
+
+
+            
+            // See how many times we can upscale the rendertarget
+            int scale = Math.Min(_screenWidth / VirtualWidth, _screenHeight / VirtualHeight);
+            // Set scale factor
+
+            // Take remainder of screen real estate, if any, and place the upscaled rendertarget at the new position
+            int startingX = (_screenWidth % (VirtualWidth * scale)) / 2;
+            int startingY = (_screenHeight % (VirtualHeight * scale)) / 2;
+            _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
+            _spriteBatch.Draw(_areaRenderTarget, new Rectangle(startingX, startingY, VirtualWidth * scale, VirtualHeight * scale), Color.White);
         }
         */
         #endregion
