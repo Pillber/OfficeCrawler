@@ -20,6 +20,12 @@ namespace OfficeCrawler {
         private Vector2 _position;
         // A integer representation of the scale (unused, scaled later elsewhere)
         private int _scale;
+        // A reference to a Transform to follow
+        private Transform _transformToFollow;
+        // A bool whether or not to follow the transform
+        private bool _followTransform;
+        // A bool whether or not to center the camera (change the origin to the center)
+        private bool _centered;
         #endregion
 
         #region Properties
@@ -37,7 +43,31 @@ namespace OfficeCrawler {
 
         // Returns the matrix transformation used for translating sprites, based off of the _position
         public Matrix TransformationMatrix {
-            get => Matrix.CreateTranslation(-_position.X, -_position.Y, 0);
+            get {
+
+                if(_centered) {
+                    return Matrix.CreateTranslation(-_position.X, -_position.Y, 0) * Matrix.CreateTranslation(GlobalGraphics.VirtualWidth / 2, GlobalGraphics.VirtualHeight / 2, 0);
+                }
+                return Matrix.CreateTranslation(-_position.X, -_position.Y, 0);
+            }
+        }
+
+        // Gets and Sets the _transformFollow private variables
+        public Transform TransformToFollow {
+            get => _transformToFollow;
+            set => _transformToFollow = value;
+        }
+
+        // Gets and Sets the bool to follow the transform
+        public bool FollowTransform {
+            get => _followTransform;
+            set => _followTransform = value;
+        }
+
+        // Property to access the _centered private variable
+        public bool Centered {
+            get => _centered;
+            set => _centered = value;
         }
         #endregion
 
@@ -51,18 +81,22 @@ namespace OfficeCrawler {
         #region Methods
         //Updates the position of the camera (debug state right now)
         public void Update() {
-            KeyboardState keystate = Keyboard.GetState();
-            if (keystate.IsKeyDown(Keys.Up)) {
-                _position.Y--;
-            }
-            if (keystate.IsKeyDown(Keys.Down)) {
-                _position.Y++;
-            }
-            if (keystate.IsKeyDown(Keys.Left)) {
-                _position.X--;
-            }
-            if (keystate.IsKeyDown(Keys.Right)) {
-                _position.X++;
+            if(_followTransform) {
+                _position = _transformToFollow.Position;
+            } else {
+                KeyboardState keystate = Keyboard.GetState();
+                if (keystate.IsKeyDown(Keys.Up)) {
+                    _position.Y--;
+                }
+                if (keystate.IsKeyDown(Keys.Down)) {
+                    _position.Y++;
+                }
+                if (keystate.IsKeyDown(Keys.Left)) {
+                    _position.X--;
+                }
+                if (keystate.IsKeyDown(Keys.Right)) {
+                    _position.X++;
+                }
             }
         }
         #endregion

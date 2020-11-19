@@ -23,9 +23,9 @@ namespace OfficeCrawler {
         // private reference to the GraphicsDevice
         private static GraphicsDevice _graphicsDevice;
         // private representation of the current width of the backbuffer
-        public static int _screenWidth;
+        public static int _windowWidth;
         // private representation of the current height of the backbuffer
-        public static int _screenHeight;
+        public static int _windowHeight;
         // private reference to a white 1x1 pixel Texture2D
         private static Texture2D _pixelRectangle;
         // private reference to a rendertarget that the Area will be drawn to
@@ -52,17 +52,19 @@ namespace OfficeCrawler {
         }
 
         // Property to access the GraphicsDevice
+        // Creates a rendertarget for the area, and sets the _windowWidth and _windowHeight to the Viewport values
         public static GraphicsDevice GraphicsDevice {
             get => _graphicsDevice;
             set {
                 _graphicsDevice = value;
                 _areaRenderTarget = new RenderTarget2D(value, VirtualWidth, VirtualHeight);
-                _screenWidth = value.Viewport.Width;
-                _screenHeight = value.Viewport.Height;
+                _windowWidth = value.Viewport.Width;
+                _windowHeight = value.Viewport.Height;
             }
         }
 
         // Property to get the 1x1 pixel Texture2D
+        // If the PixelRectangle is not set, it will make a new pixel rectangle
         public static Texture2D PixelRectangle {
             get {
                 if (_pixelRectangle == null) {
@@ -72,14 +74,16 @@ namespace OfficeCrawler {
             }
         }
 
-        public static int ScreenWidth {
-            get => _screenWidth;
-            set => _screenWidth = value;
+        // Property to access the _windowWidth
+        public static int WindowWidth {
+            get => _windowWidth;
+            set => _windowWidth = value;
         }
 
-        public static int ScreenHeight {
-            get => _screenHeight;
-            set => _screenHeight = value;
+        // Property to access the _windowHeight
+        public static int WindowHeight {
+            get => _windowHeight;
+            set => _windowHeight = value;
         }
 
 
@@ -93,20 +97,22 @@ namespace OfficeCrawler {
             _spriteBatch.Begin(samplerState: SamplerState.PointClamp, transformMatrix: transformMatrix);
         }
 
+        // Sets the _graphicsDevice Viewport to a full window viewport
         private static void SetupFullViewport() {
             _graphicsDevice.Viewport = new Viewport() {
                 X = 0,
                 Y = 0,
-                Width = _screenWidth,
-                Height = _screenHeight
+                Width = _windowWidth,
+                Height = _windowHeight
             };
         }
 
+        // Sets the _graphicsDevice Viewport to a viewport that scales the virtual resolution as much as possible and pillar/letterboxes
         private static void SetupVirtualViewport() {
-            int scale = MathHelper.Min(_screenWidth / VirtualWidth, _screenHeight / VirtualHeight);
+            int scale = MathHelper.Min(_windowWidth / VirtualWidth, _windowHeight / VirtualHeight);
             // Take remainder of screen real estate, if any, and place the upscaled rendertarget at the new position
-            int startingX = (_screenWidth % (VirtualWidth * scale)) / 2;
-            int startingY = (_screenHeight % (VirtualHeight * scale)) / 2;
+            int startingX = (_windowWidth % (VirtualWidth * scale)) / 2;
+            int startingY = (_windowHeight % (VirtualHeight * scale)) / 2;
 
             _graphicsDevice.Viewport = new Viewport() {
                 X = startingX,
@@ -116,9 +122,9 @@ namespace OfficeCrawler {
             };
         }
 
+        // Draws to the backbuffer
         public static void BeginBackbuffer() {
-            // Work with GraphicsDevice.Viewport.Width/Height to do Resolution Independence Math if fullscreen
-           
+            //make sure we are rendering to the backbuffer
             _graphicsDevice.SetRenderTarget(null);
             //set viewport to full window
             SetupFullViewport();
@@ -158,47 +164,6 @@ namespace OfficeCrawler {
                 InitializePixelRectangle();
             }
             _spriteBatch.Draw(_pixelRectangle, new Rectangle((int) Math.Round(position.X), (int) Math.Round(position.Y), width, height), color);
-        }
-        
-
-        private static void SetupFullViewport() {
-            GraphicsDevice.Viewport = new Viewport {
-                X = 0,
-                Y = 0,
-                Width = _screenWidth,
-                Height = _screenHeight
-            };
-        }
-
-        private static void SetupVirtualViewport() {
-            float aspectRatio = VirtualWidth / (float) VirtualHeight;
-            int width = _screenWidth;
-            int height = (int)(_screenWidth / aspectRatio + 0.5f);
-
-            if(height > _screenHeight) {
-                height = _screenHeight;
-                width = (int)(height * aspectRatio + 0.5f);
-            }
-            GraphicsDevice.Viewport = new Viewport {
-                X = (_screenWidth / 2) - (width / 2),
-                Y = (_screenHeight / 2) - (height / 2),
-                Width = width,
-                Height = height
-            };
-
-
-
-
-            
-            // See how many times we can upscale the rendertarget
-            int scale = Math.Min(_screenWidth / VirtualWidth, _screenHeight / VirtualHeight);
-            // Set scale factor
-
-            // Take remainder of screen real estate, if any, and place the upscaled rendertarget at the new position
-            int startingX = (_screenWidth % (VirtualWidth * scale)) / 2;
-            int startingY = (_screenHeight % (VirtualHeight * scale)) / 2;
-            _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
-            _spriteBatch.Draw(_areaRenderTarget, new Rectangle(startingX, startingY, VirtualWidth * scale, VirtualHeight * scale), Color.White);
         }
         */
         #endregion

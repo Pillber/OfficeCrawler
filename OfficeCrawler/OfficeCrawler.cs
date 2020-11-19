@@ -36,8 +36,17 @@ namespace OfficeCrawler {
             GlobalGraphics.GraphicsManager = _graphics;
             GlobalGraphics.GraphicsDevice = GraphicsDevice;
             GlobalGraphics.SpriteBatch = _spriteBatch;
+
+            GlobalGraphics.GraphicsManager.IsFullScreen = true;
+            GlobalGraphics.GraphicsManager.ApplyChanges();
+
             _player.Initialize();
             _word.Initialize();
+
+            _camera.TransformToFollow = _player.Transform;
+            _camera.FollowTransform = true;
+            _camera.Centered = true;
+
             base.Initialize();
         }
 
@@ -72,8 +81,6 @@ namespace OfficeCrawler {
 
         protected override void Draw(GameTime gameTime) {
 
-            //Debug.WriteLine("Viewport Size, Width: " + GlobalGraphics.GraphicsDevice.Viewport.Width + ", Height: " + GlobalGraphics.GraphicsDevice.Viewport.Height);
-
             GraphicsDevice.Clear(Color.CornflowerBlue);
             // TODO: Add your drawing logic here
             GlobalGraphics.BeginArea(_camera.TransformationMatrix);
@@ -95,12 +102,10 @@ namespace OfficeCrawler {
 
         private void WindowSizeChanged(object sender, EventArgs eventArgs) {
             if(GlobalGraphics.GraphicsManager != null) {
-                Debug.WriteLine("Backbuffer Width: " + GlobalGraphics.GraphicsManager.PreferredBackBufferWidth + ", Height: " + GlobalGraphics.GraphicsManager.PreferredBackBufferHeight);
-
                 int width = Window.ClientBounds.Width;
                 int height = Window.ClientBounds.Height;
-                GlobalGraphics.ScreenWidth = width;
-                GlobalGraphics.ScreenHeight = height;
+                GlobalGraphics.WindowWidth = width;
+                GlobalGraphics.WindowHeight = height;
                 GlobalGraphics.GraphicsDevice.Viewport = new Viewport() {
                     X = 0,
                     Y = 0,
