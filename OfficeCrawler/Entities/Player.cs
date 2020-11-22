@@ -6,13 +6,19 @@ namespace OfficeCrawler {
     public class Player : BaseEntity {
 
         #region Constructor & Initializing
+        /// <summary>
+        /// Empty constructor for now; Constructs a player with the base of BaseEntity
+        /// </summary>
         public Player() : base() {
 
         }
         #endregion
 
         #region Override Update & Physics
-        // Overrides the normal update method for entities
+        /// <summary>
+        /// Overrides the normal update method for entities to make it specific to the player 
+        /// </summary>
+        /// <param name="gameTime"></param>
         public override void Update(GameTime gameTime) {
 
             //Uses keyboard state and Physics move methods to move player

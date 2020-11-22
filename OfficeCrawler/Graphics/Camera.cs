@@ -16,32 +16,46 @@ namespace OfficeCrawler {
     public class Camera {
 
         #region Private Variables
-        // A vector2 representation of the position (x and y)
+        /// <summary>
+        /// A vector2 representation of the position (x and y) 
+        /// </summary>
         private Vector2 _position;
-        // A integer representation of the scale (unused, scaled later elsewhere)
+        /// <summary>
+        /// A integer representation of the scale (unused, scaled later elsewhere) 
+        /// </summary>
         private int _scale;
-        // A reference to a Transform to follow
+        /// <summary>
+        /// A reference to a Transform to follow 
+        /// </summary>
         private Transform _transformToFollow;
-        // A bool whether or not to follow the transform
+        /// <summary>
+        /// A bool whether or not to follow the transform 
+        /// </summary>
         private bool _followTransform;
-        // A bool whether or not to center the camera (change the origin to the center)
+        /// <summary>
+        /// A bool whether or not to center the camera (change the origin to the center) 
+        /// </summary>
         private bool _centered;
         #endregion
 
         #region Properties
-        // Gets the _position private variable
+        /// <summary>
+        /// Gets the _position private variable 
+        /// </summary>
         public Vector2 Position {
             get => _position;
             set => _position = value;
         }
-
-        // Gets the _scale private variable (unsused, scaled later elsewhere)
+        /// <summary>
+        /// Gets the _scale private variable (unsused, scaled later elsewhere) 
+        /// </summary>
         public int Scale {
             get => _scale;
             set => _scale = value;
         }
-
-        // Returns the matrix transformation used for translating sprites, based off of the _position
+        /// <summary>
+        /// Returns the matrix transformation used for translating sprites, based off of the _position 
+        /// </summary>
         public Matrix TransformationMatrix {
             get {
 
@@ -51,20 +65,23 @@ namespace OfficeCrawler {
                 return Matrix.CreateTranslation(-_position.X, -_position.Y, 0);
             }
         }
-
-        // Gets and Sets the _transformFollow private variables
+        /// <summary>
+        /// Gets and Sets the _transformFollow private variables 
+        /// </summary>
         public Transform TransformToFollow {
             get => _transformToFollow;
             set => _transformToFollow = value;
         }
-
-        // Gets and Sets the bool to follow the transform
+        /// <summary>
+        /// Gets and Sets the bool to follow the transform 
+        /// </summary>
         public bool FollowTransform {
             get => _followTransform;
             set => _followTransform = value;
         }
-
-        // Property to access the _centered private variable
+        /// <summary>
+        /// Property to access the _centered private variable 
+        /// </summary>
         public bool Centered {
             get => _centered;
             set => _centered = value;
@@ -72,14 +89,19 @@ namespace OfficeCrawler {
         #endregion
 
         #region Constructor
-        // Makes a camera, with starting position position
+        /// <summary>
+        /// Makes a camera, with starting position position 
+        /// </summary>
+        /// <param name="position"></param>
         public Camera(Vector2 position) {
             _position = position;
         }
         #endregion
 
         #region Methods
-        //Updates the position of the camera (debug state right now)
+        /// <summary>
+        /// Updates the position of the camera (debug state right now) 
+        /// </summary>
         public void Update() {
             if(_followTransform) {
                 _position = _transformToFollow.Position;

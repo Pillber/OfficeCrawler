@@ -4,20 +4,32 @@ namespace OfficeCrawler {
 
     public class Transform {
         #region Private Variables
-        // A Vector2 representation of the x and y of this transform
+        /// <summary>
+        /// A Vector2 representation of the x and y of this transform 
+        /// </summary>
         private Vector2 _position;
-        // A float representation of the x value of this transform. Linked to the X value of _position.
+        /// <summary>
+        /// A float representation of the x value of this transform. Linked to the X value of _position. 
+        /// </summary>
         private float _x;
-        // A float representation of the y value of this transform. Linked to the Y value of _position.
+        /// <summary>
+        /// A float representation of the y value of this transform. Linked to the Y value of _position. 
+        /// </summary>
         private float _y;
-        // A float representation of the rotation of this transform
+        /// <summary>
+        /// A float representation of the rotation of this transform 
+        /// </summary>
         private float _rotation;
-        // A float representation of the scale of this transform
+        /// <summary>
+        /// A float representation of the scale of this transformc
+        /// </summary>
         private int _scale;
         #endregion
 
         #region Properties
-        // Gets the _position private variable. Setting will also set the _x and _y variables.
+        /// <summary>
+        /// Gets the _position private variable. Setting will also set the _x and _y variables. 
+        /// </summary>
         public Vector2 Position {
             get => _position;
             set {
@@ -26,7 +38,9 @@ namespace OfficeCrawler {
                 _y = value.Y;
             }
         }
-        // Gets the _x private variable. Setting will also set the _position.X variable
+        /// <summary>
+        /// Gets the _x private variable. Setting will also set the _position.X variable 
+        /// </summary>
         public float X {
             get => _x;
             set {
@@ -34,7 +48,9 @@ namespace OfficeCrawler {
                 _position.X = value;
             }
         }
-        // Gets the _y private variable. Setting will also set the _position.Y variable
+        /// <summary>
+        /// Gets the _y private variable. Setting will also set the _position.Y variable 
+        /// </summary>
         public float Y {
             get => _y;
             set {
@@ -42,12 +58,16 @@ namespace OfficeCrawler {
                 _position.Y = value;
             }
         }
-        // Gets the _roation private variable
+        /// <summary>
+        /// Gets the _roation private variable 
+        /// </summary>
         public float Rotation {
             get => _rotation;
             set => _rotation = value;
         }
-        // Gets the _scale private variable
+        /// <summary>
+        /// Gets the _scale private variable 
+        /// </summary>
         public int Scale {
             get => _scale;
             set => _scale = value;
@@ -55,7 +75,9 @@ namespace OfficeCrawler {
         #endregion
 
         #region Constructors
-        // Initializes all variables in the transform to be 0, except for scale, which is default 1
+        /// <summary>
+        /// Initializes a default Transform with all variables in the transform to be 0, except for scale, which is default 1
+        /// </summary>
         public Transform() {
             _position = Vector2.Zero;
             _x = 0f;
@@ -64,7 +86,12 @@ namespace OfficeCrawler {
             _scale = 1;
         }
 
-        // Initializes all variables to the specified value passed in to the constructor
+        /// <summary>
+        /// Initializes a Transform with specified values
+        /// </summary>
+        /// <param name="position">A Vector2 value representing the position</param>
+        /// <param name="rotation">A float value representing the rotation</param>
+        /// <param name="scale">An int value representing the scale</param>
         public Transform(Vector2 position, float rotation, int scale) {
             _position = position;
             _x = _position.X;
@@ -73,7 +100,10 @@ namespace OfficeCrawler {
             _scale = scale;
         }
 
-        // Initializes all variables to the other transform's variables
+        /// <summary>
+        /// Constructs a new Transform based on the values of another Transform
+        /// </summary>
+        /// <param name="other">Another Transform</param>
         public Transform(Transform other) {
             _position = other.Position;
             _x = other.X;

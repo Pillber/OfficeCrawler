@@ -9,50 +9,72 @@ namespace OfficeCrawler {
     public static class GlobalGraphics {
 
         #region Constants
-        // Constant for the Virtual Width of the game (in pixels)
+        /// <summary>
+        /// Constant for the Virtual Width of the game (in pixels) 
+        /// </summary>
         public const int VirtualWidth = 320;
-        // Constant for the Virtual Height of the game (in pixels)
+        /// <summary>
+        /// Constant for the Virtual Height of the game (in pixels) 
+        /// </summary>
         public const int VirtualHeight = 180;
         #endregion
 
         #region Private Variables
-        // private reference to the SpriteBatch
+        /// <summary>
+        ///  private reference to the SpriteBatch
+        /// </summary>
         private static SpriteBatch _spriteBatch;
-        // private reference to the GraphicsDeviceManager
+        /// <summary>
+        /// private reference to the GraphicsDeviceManager
+        /// </summary>
         private static GraphicsDeviceManager _graphicsManager;
-        // private reference to the GraphicsDevice
+        /// <summary>
+        /// private reference to the GraphicsDevice
+        /// </summary>
         private static GraphicsDevice _graphicsDevice;
-        // private representation of the current width of the backbuffer
+        /// <summary>
+        /// private representation of the current width of the backbuffer
+        /// </summary>
         public static int _windowWidth;
-        // private representation of the current height of the backbuffer
+        /// <summary>
+        /// private representation of the current height of the backbuffer
+        /// </summary>
         public static int _windowHeight;
-        // private reference to a white 1x1 pixel Texture2D
+        /// <summary>
+        /// private reference to a white 1x1 pixel Texture2D
+        /// </summary>
         private static Texture2D _pixelRectangle;
-        // private reference to a rendertarget that the Area will be drawn to
+        /// <summary>
+        ///  private reference to a rendertarget that the Area will be drawn to
+        /// </summary>
         private static RenderTarget2D _areaRenderTarget;
 
-        
+
         #endregion
 
         #region Properties
-        // Property to access the spritebatch
+        /// <summary>
+        /// Property to access the spritebatch
+        /// </summary>
         public static SpriteBatch SpriteBatch {
             get => _spriteBatch;
             set {
                 _spriteBatch = value;
             }
         }
-
-        // Property to access the GraphicsDeviceManager
+        /// <summary>
+        /// Property to access the GraphicsDeviceManager
+        /// </summary>
         public static GraphicsDeviceManager GraphicsManager {
             get => _graphicsManager;
             set {
                 _graphicsManager = value;
             }
         }
-
-        // Property to access the GraphicsDevice
-        // Creates a rendertarget for the area, and sets the _windowWidth and _windowHeight to the Viewport values
+        /// <summary>
+        /// Property to access the GraphicsDevice.
+        /// Creates a rendertarget for the area, and sets the _windowWidth and _windowHeight to the Viewport values
+        /// </summary>
         public static GraphicsDevice GraphicsDevice {
             get => _graphicsDevice;
             set {
@@ -63,8 +85,10 @@ namespace OfficeCrawler {
             }
         }
 
-        // Property to get the 1x1 pixel Texture2D
-        // If the PixelRectangle is not set, it will make a new pixel rectangle
+        /// <summary>
+        /// Property to get the 1x1 pixel Texture2D.
+        /// If the PixelRectangle is not set, it will make a new pixel rectangle
+        /// </summary>
         public static Texture2D PixelRectangle {
             get {
                 if (_pixelRectangle == null) {
@@ -74,13 +98,18 @@ namespace OfficeCrawler {
             }
         }
 
-        // Property to access the _windowWidth
+        /// <summary>
+        /// Property to access the _windowWidth
+        /// </summary>
+
         public static int WindowWidth {
             get => _windowWidth;
             set => _windowWidth = value;
         }
 
-        // Property to access the _windowHeight
+        /// <summary>
+        /// Property to access the _windowHeight
+        /// </summary>
         public static int WindowHeight {
             get => _windowHeight;
             set => _windowHeight = value;
@@ -90,14 +119,18 @@ namespace OfficeCrawler {
         #endregion
 
         #region Methods
-        // Begins drawing for the scene (pixel art)
+        /// <summary>
+        /// Begins drawing for the scene (pixel art)
+        /// </summary>
+        /// <param name="transformMatrix"></param>
         public static void BeginArea(Matrix transformMatrix) {
             _graphicsDevice.SetRenderTarget(_areaRenderTarget);
             _graphicsDevice.Clear(Color.CornflowerBlue);
             _spriteBatch.Begin(samplerState: SamplerState.PointClamp, transformMatrix: transformMatrix);
         }
-
-        // Sets the _graphicsDevice Viewport to a full window viewport
+        /// <summary>
+        /// Sets the _graphicsDevice Viewport to a full window viewport
+        /// </summary>
         private static void SetupFullViewport() {
             _graphicsDevice.Viewport = new Viewport() {
                 X = 0,
@@ -106,8 +139,9 @@ namespace OfficeCrawler {
                 Height = _windowHeight
             };
         }
-
-        // Sets the _graphicsDevice Viewport to a viewport that scales the virtual resolution as much as possible and pillar/letterboxes
+        /// <summary>
+        /// Sets the _graphicsDevice Viewport to a viewport that scales the virtual resolution as much as possible and pillar/letterboxes
+        /// </summary>
         private static void SetupVirtualViewport() {
             int scale = MathHelper.Min(_windowWidth / VirtualWidth, _windowHeight / VirtualHeight);
             // Take remainder of screen real estate, if any, and place the upscaled rendertarget at the new position
@@ -121,8 +155,9 @@ namespace OfficeCrawler {
                 Height = VirtualHeight * scale
             };
         }
-
-        // Draws to the backbuffer
+        /// <summary>
+        /// Draws to the backbuffer
+        /// </summary>
         public static void BeginBackbuffer() {
             //make sure we are rendering to the backbuffer
             _graphicsDevice.SetRenderTarget(null);
@@ -135,20 +170,23 @@ namespace OfficeCrawler {
             _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
             _spriteBatch.Draw(_areaRenderTarget, new Rectangle(0, 0, _graphicsDevice.Viewport.Width, _graphicsDevice.Viewport.Height), Color.White);
         }
-
-        // Ends the current spritebatch
+        /// <summary>
+        /// Ends the current spritebatch
+        /// </summary>
         public static void End() {
             _spriteBatch.End();
             _graphicsDevice.SetRenderTarget(null);
         }
-
-        // Sets up the 1x1 pixel Texture2D
+        /// <summary>
+        /// Sets up the 1x1 pixel Texture2D
+        /// </summary>
         private static void InitializePixelRectangle() {
             _pixelRectangle = new Texture2D(_graphicsDevice, 1, 1);
             _pixelRectangle.SetData(new Color[] { Color.White });
         }
-
-        // Deletes the 1x1 pixel Texture2D from video memory, as well as the areaRenderTarget
+        /// <summary>
+        /// Deletes the 1x1 pixel Texture2D from video memory, as well as the areaRenderTarget
+        /// </summary>
         public static void UnloadContent() {
             if (_pixelRectangle != null)
                 _pixelRectangle.Dispose();
