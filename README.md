@@ -11,7 +11,7 @@ Look! Different Resolutions! How cool!
 ## Challenges
 The biggest challenge was fullscreening. We encountered lots of errors with stretching of the assets when in fullscreen. After much debugging, we fixed the problem by messing with the backbuffer settings. 
 ## Next Steps
-Our next steps include finishing the backend of our game. Once we finish the rendering systems, and physics we can finish the prototype itself. With the better support for the game, instead of having to start over if we don't like the prototype, we can just take out the parts we like and use the skeleton to make another prototype.
+Our next steps is to make our new vision. We have lots of planning for what we want to do next, we just need to turn it into reality. No spoilers tho! ;)
 ## Running Yourself
 If you are interested in running yourself, there are some steps to follow:
 1. Install Visual Studio 2019 (any version, we use community) and add the following modules to the installation:
